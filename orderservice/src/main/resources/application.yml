@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: orderservice
+  config:
+    import: "optional:file:.env[.properties]"
+
+  # MongoDB
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: bpmn-services
+      uuid-representation: standard
+  # PostgreSQL
+  datasource:
+    postgres:
+      url: jdbc:postgresql://localhost:5432/bpmn-services
+      driver-class-name: org.postgresql.Driver
+      username: postgres
+      password: 123456
+
+  jpa:
+    postgres:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+
+  # Security & Keycloak Ayarlar? (de?i?meden kal?yor)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}   # realm bilgisi
+          jwk-set-uri: ${JWT_ISSUER_URI}/protocol/openid-connect/certs
+
+jwt:
+  auth:
+    converter:
+      resource-id: ${CLIENT_ID}   # client bilgisi
+      principle-attribute: ${PRINCIPLE_ATTRIBUTE}
+
+keycloak:
+  client-id: ${CLIENT_ID}
+  client-secret: ${CLIENT_SECRET}
+  username: ${K_USERNAME}
+  password: ${K_PASSWORD}
+  realm: ${REALM}
+  auth-server-url: ${ADMIN_AUTH_URL}
+  token:
+    url: ${JWT_ISSUER_URI}/protocol/openid-connect/token
+
+server:
+  port: 8282
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    com.mongodb: DEBUG
+    com.keycloak: DEBUG
