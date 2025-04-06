@@ -88,11 +88,13 @@ public class InitializeController {
     @PutMapping("/{orderRequestId}/update-products")
     public ResponseEntity<GeneralResponse<OrderRequestResponse>> updateProducts(
             @PathVariable UUID orderRequestId,
-            @RequestParam String productCatalogCode) {
+            @RequestParam String productCatalogCode,
+            @RequestParam(defaultValue = "false") boolean willBeDelete) {
         log.info("Received request to update products in order {}", orderRequestId);
-        OrderRequestResponse updatedOrder = this.orderRequestService.addProducts(
+        OrderRequestResponse updatedOrder = this.orderRequestService.updateProduct(
                 orderRequestId,
-                productCatalogCode
+                productCatalogCode,
+                willBeDelete
         );
 
         return ResponseEntity.ok(GeneralResponse.<OrderRequestResponse>builder()

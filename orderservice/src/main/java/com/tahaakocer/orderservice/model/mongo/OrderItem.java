@@ -1,5 +1,6 @@
 package com.tahaakocer.orderservice.model.mongo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tahaakocer.orderservice.utils.Util;
 import jakarta.persistence.PrePersist;
 import lombok.Builder;
@@ -21,15 +22,18 @@ public class OrderItem extends BaseModel {
     private List<Characteristic> characteristics;
 
     @Field("account_ref")
+    @JsonProperty("account_ref")
     private AccountRef accountRef;
 
     @Field("product")
     private Product product;
 
     @Field("bpmn_flow_ref")
+    @JsonProperty("bpmn_flow_ref")
     private BpmnFlowRef bpmnFlowRef;
 
     @Field("order_item_type")
+    @JsonProperty("order_item_type")
     private String orderItemType;
 
     @PrePersist

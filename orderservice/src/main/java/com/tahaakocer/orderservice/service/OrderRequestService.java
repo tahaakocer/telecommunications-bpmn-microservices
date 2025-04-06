@@ -114,7 +114,15 @@ public class OrderRequestService {
         return this.orderRequestMapper.entityToResponse(orderRequest);
     }
 
-    public OrderRequestResponse addProducts(UUID orderRequestId, String productCatalogCode) {
+    public OrderRequestResponse updateProduct(UUID orderRequestId, String productCatalogCode, boolean willBeDelete) {
+        if (willBeDelete) {
+            return deleteProduct(orderRequestId, productCatalogCode);
+        } else {
+            return addProducts(orderRequestId, productCatalogCode);
+        }
+    }
+
+    private OrderRequestResponse addProducts(UUID orderRequestId, String productCatalogCode) {
         ProductCatalogDto productCatalogDto = this.productCatalogService.getProductCatalogByCode(productCatalogCode);
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
@@ -137,7 +145,6 @@ public class OrderRequestService {
                             .value(characteristicDto.getValue())
                             .sourceType(characteristicDto.getSourceType())
                             .build()
-
             ).collect(Collectors.toList()));
             product.setCode(Util.generateRandomCode("PRD"));
             product.setMainProductCode(productCatalogDto.getCode());
@@ -156,6 +163,24 @@ public class OrderRequestService {
             throw new GeneralException(e.getMessage());
         }
 
+        return this.orderRequestMapper.entityToResponse(orderRequest);
+    }
+
+    private OrderRequestResponse deleteProduct(UUID orderRequestId, String productCatalogCode) {
+        OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
+                .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
+        try {
+            if(orderRequest.getBaseOrder() instanceof ProductOrder productOrder) {
+                productOrder.getProducts().removeIf(product -> product.getMainProductCode().equals(productCatalogCode));
+                orderRequestRepository.save(orderRequest);
+                log.info("Updated order request: {}", orderRequest);
+                return this.orderRequestMapper.entityToResponse(orderRequest);
+            }
+
+        } catch (Exception e) {
+            log.error("Error deleting product: {}", e.getMessage());
+            throw new GeneralException(e.getMessage());
+        }
         return this.orderRequestMapper.entityToResponse(orderRequest);
     }
 

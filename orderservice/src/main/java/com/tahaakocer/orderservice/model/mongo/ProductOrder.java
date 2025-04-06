@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -12,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductOrder extends BaseOrder{
     @Field("products")
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 }

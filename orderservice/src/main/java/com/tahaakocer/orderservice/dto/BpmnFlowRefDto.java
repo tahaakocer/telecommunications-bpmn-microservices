@@ -1,12 +1,11 @@
 package com.tahaakocer.orderservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,9 +13,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BpmnFlowRefDto {
-    private UUID id;
+
+    @JsonProperty("process_instance_id")
     private String processInstanceId;
+
+    @JsonProperty("process_definition_name")
     private String processDefinitionName;
+
+    @JsonProperty("current_activity_id")
     private String currentActivityId;
+
+    @JsonProperty("current_activity_name")
     private String currentActivityName;
 }

@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.CLASS,
@@ -35,8 +36,8 @@ public class BaseOrder extends BaseModel {
     private EngagedParty engagedParty;
 
     @Field("accounts")
-    @JsonProperty("accounts")
-    private List<AccountRef> accountRefs;
+    @JsonProperty("account_refs")
+    private List<AccountRef> accountRefs = new ArrayList<>();
 
     @Field("bpmn_flow_ref")
     @JsonProperty("bpmn_flow_ref")
@@ -44,11 +45,11 @@ public class BaseOrder extends BaseModel {
 
     @Field("order_items")
     @JsonProperty("order_items")
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Field("characteristics")
     @JsonProperty("characteristics")
-    private List<Characteristic> characteristics;
+    private List<Characteristic> characteristics = new ArrayList<>();
 
     @Field("order_type")
     @JsonProperty("order_type")
