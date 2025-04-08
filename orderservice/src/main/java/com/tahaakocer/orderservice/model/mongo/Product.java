@@ -19,8 +19,7 @@ public class Product extends BaseModel {
     @Field("code")
     private String code;
 
-    @Field("main_product_code")
-    @JsonProperty("main_product_code")
+    @Field("mainProductCode")
     private String mainProductCode;
 
     @Field("name")
@@ -29,16 +28,13 @@ public class Product extends BaseModel {
     @Field("characteristics")
     private List<Characteristic> characteristics;
 
-    @Field("product_catalog_id")
-    @JsonProperty("product_catalog_id")
+    @Field("productCatalogId")
     private UUID productCatalogId;
 
-    @Field("product_type")
-    @JsonProperty("product_type")
+    @Field("productType")
     private String productType;
 
-    @Field("product_conf_type")
-    @JsonProperty("product_conf_type")
+    @Field("productConfType")
     private String productConfType;
 
 

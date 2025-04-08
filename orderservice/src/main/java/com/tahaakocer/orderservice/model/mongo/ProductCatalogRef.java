@@ -11,9 +11,9 @@ public class ProductCatalogRef {
     @Id
     private UUID id;
 
-    @Field("product_catalog_code")
+    @Field("productCatalogCode")
     private String productCatalogCode;
 
-    @Field("ref_product_catalog_id")
+    @Field("refProductCatalogId")
     private String refProductCatalogId;
 }

@@ -2,12 +2,13 @@ package com.tahaakocer.orderservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GeneralResponse<T> {
     private int code;

@@ -28,35 +28,27 @@ import java.util.List;
 public class BaseOrder extends BaseModel {
 
     @Field("code")
-    @JsonProperty("code")
     private String code;
 
-    @Field("engaged_party")
-    @JsonProperty("engaged_party")
+    @Field("engagedParty")
     private EngagedParty engagedParty;
 
-    @Field("accounts")
-    @JsonProperty("account_refs")
+    @Field("accountRefs")
     private List<AccountRef> accountRefs = new ArrayList<>();
 
-    @Field("bpmn_flow_ref")
-    @JsonProperty("bpmn_flow_ref")
+    @Field("bpmnFlowRef")
     private BpmnFlowRef bpmnFlowRef;
 
-    @Field("order_items")
-    @JsonProperty("order_items")
+    @Field("orderItems")
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Field("characteristics")
-    @JsonProperty("characteristics")
     private List<Characteristic> characteristics = new ArrayList<>();
 
-    @Field("order_type")
-    @JsonProperty("order_type")
+    @Field("orderType")
     private String orderType;
 
-    @Field("is_draft")
-    @JsonProperty("is_draft")
+    @Field("isDraft")
     private Boolean isDraft;
 
 

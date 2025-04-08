@@ -9,13 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PackageChangeOrder extends BaseOrder{
-    @Field("source_product")
-    @JsonProperty("source_product")
+    @Field("sourceProduct")
     private Product sourceProduct;
-    @Field("target_product")
-    @JsonProperty("target_product")
+    @Field("targetProduct")
     private Product targetProduct;
-    @Field("re_commitment")
-    @JsonProperty("re_commitment")
+    @Field("reCommitment")
     private String reCommitment;
 }

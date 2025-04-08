@@ -1,12 +1,18 @@
 package com.tahaakocer.orderservice.service;
 
+import com.tahaakocer.orderservice.client.ProcessServiceClient;
+import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
 import com.tahaakocer.orderservice.dto.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.ProductCatalogDto;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
-import com.tahaakocer.orderservice.dto.request.OrderRequestResponse;
+import com.tahaakocer.orderservice.dto.process.StartProcessResponse;
+import com.tahaakocer.orderservice.dto.order.OrderRequestResponse;
+import com.tahaakocer.orderservice.dto.response.GeneralResponse;
+import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.exception.NotFoundException;
 import com.tahaakocer.orderservice.initializer.OrderFactoryRegistry;
+import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.OrderRequestMapper;
 import com.tahaakocer.orderservice.model.mongo.*;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
@@ -17,13 +23,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,16 +38,23 @@ public class OrderRequestService {
     private final OrderFactoryRegistry orderFactoryRegistry;
     private final MongoTemplate mongoTemplate;
     private final OrderRequestMapper orderRequestMapper;
+    private final List<OrderUpdateStrategy> updateStrategies;
+    private final ProcessServiceClient processServiceClient;
 
     private final ProductCatalogService productCatalogService;
     public OrderRequestService(OrderRequestRepository orderRequestRepository,
                                OrderFactoryRegistry orderFactoryRegistry,
                                MongoTemplate mongoTemplate,
-                               OrderRequestMapper orderRequestMapper, ProductCatalogService productCatalogService) {
+                               OrderRequestMapper orderRequestMapper,
+                               List<OrderUpdateStrategy> updateStrategies,
+                               ProcessServiceClient processServiceClient,
+                               ProductCatalogService productCatalogService) {
         this.orderRequestRepository = orderRequestRepository;
         this.orderFactoryRegistry = orderFactoryRegistry;
         this.mongoTemplate = mongoTemplate;
         this.orderRequestMapper = orderRequestMapper;
+        this.updateStrategies = updateStrategies;
+        this.processServiceClient = processServiceClient;
         this.productCatalogService = productCatalogService;
     }
 
@@ -55,13 +66,63 @@ public class OrderRequestService {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setChannel(channel);
         orderRequest.setBaseOrder(order);
-        orderRequest.setCreatedBy(order.getCreatedBy());
         orderRequest.setCreateDate(order.getCreateDate());
-        this.orderRequestRepository.save(orderRequest);
 
         log.info("Created order request: {}", orderRequest);
+
+        try {
+            this.orderRequestRepository.save(orderRequest);
+            startOrderProcess(orderRequest, orderType);
+        } catch (Exception e) {
+            log.error("Error starting process for order request ID: {}. Error: {}", orderRequest.getId(), e.getMessage(), e);
+            throw new GeneralException("Failed to start process: " + e.getMessage(), e);
+        }
+
         return this.orderRequestMapper.entityToResponse(orderRequest);
     }
+
+    private void startOrderProcess(OrderRequest orderRequest, String processOrderType) {
+        log.info("Starting process for order request ID: {}", orderRequest.getId());
+
+        // Süreç değişkenleri hazırlama
+        Map<String, Object> variables = prepareProcessVariables(orderRequest);
+
+        ResponseEntity<GeneralResponse<StartProcessResponse>> responseEntity;
+        try {
+            String processChannel = orderRequest.getChannel();
+
+            responseEntity = processServiceClient.startProcess(
+                    processOrderType,
+                    processChannel,
+                    variables
+            );
+
+            if (responseEntity.getBody() == null  || responseEntity.getBody().getData() == null) {
+                throw new GeneralException("Process service response is empty or invalid");
+            }
+        } catch (Exception e) {
+            log.error("Failed to start process for order request ID: {}. Error: {}", orderRequest.getId(), e.getMessage(), e);
+            throw new GeneralException("Failed to start process: " + e.getMessage(), e);
+        }
+    }
+    private Map<String, Object> prepareProcessVariables(OrderRequest orderRequest) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("orderRequestId", orderRequest.getId().toString());
+        variables.put("channel", orderRequest.getChannel());
+        variables.put("orderType", orderRequest.getBaseOrder().getOrderType());
+        variables.put("createDate", orderRequest.getCreateDate().toString());
+        variables.put("createdBy", orderRequest.getBaseOrder().getCreatedBy());
+        return variables;
+    }
+//    private void saveProcessInfoToOrder(OrderRequest orderRequest, StartProcessResponse processResponse) {
+//        orderRequest.getBaseOrder().setBpmnFlowRef(
+//                BpmnFlowRef.builder()
+//                        .processInstanceId(processResponse.getProcessInstanceId())
+//                        .processDefinitionName(processResponse.getProcessDefinitionId())
+//                .build()
+//        );
+//    }
+
     public OrderRequestResponse updateOrderField(UUID orderRequestId, String fieldPath, Object value) {
         log.info("Updating order field {} for order request ID: {}", fieldPath, orderRequestId);
 
@@ -184,4 +245,50 @@ public class OrderRequestService {
         return this.orderRequestMapper.entityToResponse(orderRequest);
     }
 
+    public OrderRequestResponse updateOrderRequest(UUID orderRequestId, OrderUpdateDto orderUpdateDto) {
+        OrderRequest orderRequest = this.orderRequestRepository.findById(orderRequestId).orElseThrow(
+                () -> new GeneralException("Order request not found with ID: " + orderRequestId)
+        );
+        log.info("Updating order request with ID: {}", orderRequestId);
+
+        updateStrategies.forEach(strategy -> {
+            if(strategy.canHandle(orderUpdateDto)) {
+                if(strategy.objectStatus(orderRequest)) {
+                    log.info("Updating order request with strategy: {}", strategy.getClass().getSimpleName());
+                    strategy.update(orderRequest, orderUpdateDto);
+                } else {
+                    log.info("Creating order request with strategy: {}", strategy.getClass().getSimpleName());
+                    strategy.create(orderRequest, orderUpdateDto);
+                }
+            }
+        });
+
+         return this.orderRequestMapper.entityToResponse(orderRequest);
+    }
+
+    public OrderRequestResponse updateOrderStatus(UUID orderRequestId, BpmnFlowRefDto bpmnFlowRefDto) {
+        OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
+                .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId)
+                );
+        BpmnFlowRef bpmnFlowRef = BpmnFlowRef.builder()
+                .id(UUID.randomUUID())
+                .processInstanceId(bpmnFlowRefDto.getProcessInstanceId())
+                .processDefinitionId(bpmnFlowRefDto.getProcessDefinitionId())
+                .processBusinessKey(bpmnFlowRefDto.getProcessBusinessKey())
+                .build();
+
+        if(orderRequest.getBaseOrder().getBpmnFlowRef() == null) {
+            bpmnFlowRef.setId(UUID.randomUUID());
+        } else {
+            bpmnFlowRef.setId(orderRequest.getBaseOrder().getBpmnFlowRef().getId());
+        }
+        orderRequest.getBaseOrder().setBpmnFlowRef(bpmnFlowRef);
+        orderRequest.getBaseOrder().setLastModifiedBy(KeycloakUtil.getKeycloakUsername());
+        orderRequest.getBaseOrder().setUpdateDate(LocalDateTime.now());
+        orderRequest.setLastModifiedBy(orderRequest.getBaseOrder().getLastModifiedBy());
+        orderRequest.setUpdateDate(orderRequest.getBaseOrder().getUpdateDate());
+        orderRequestRepository.save(orderRequest);
+        return this.orderRequestMapper.entityToResponse(orderRequest);
+
+    }
 }

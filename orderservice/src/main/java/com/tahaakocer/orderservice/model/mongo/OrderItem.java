@@ -21,19 +21,16 @@ public class OrderItem extends BaseModel {
     @Field("characteristics")
     private List<Characteristic> characteristics;
 
-    @Field("account_ref")
-    @JsonProperty("account_ref")
+    @Field("accountRef")
     private AccountRef accountRef;
 
     @Field("product")
     private Product product;
 
-    @Field("bpmn_flow_ref")
-    @JsonProperty("bpmn_flow_ref")
+    @Field("bpmnFLowRef")
     private BpmnFlowRef bpmnFlowRef;
 
-    @Field("order_item_type")
-    @JsonProperty("order_item_type")
+    @Field("orderItemType")
     private String orderItemType;
 
     @PrePersist

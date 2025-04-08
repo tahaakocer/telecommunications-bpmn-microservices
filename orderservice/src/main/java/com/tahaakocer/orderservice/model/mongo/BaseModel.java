@@ -21,22 +21,18 @@ public class BaseModel {
     private UUID id = UUID.randomUUID();
 
     @CreatedDate
-    @Field("create_date")
-    @JsonProperty("create_date")
+    @Field("createDate")
     private LocalDateTime createDate;
 
     @LastModifiedDate
-    @Field("update_date")
-    @JsonProperty("update_date")
+    @Field("updateDate")
     private LocalDateTime updateDate;
 
     @CreatedBy
-    @Field("created_by")
-    @JsonProperty("created_by")
+    @Field("createdBy")
     private String createdBy;
 
     @LastModifiedBy
-    @Field("last_modified_by")
-    @JsonProperty("last_modified_by")
+    @Field("lastModifiedBy")
     private String lastModifiedBy;
 }

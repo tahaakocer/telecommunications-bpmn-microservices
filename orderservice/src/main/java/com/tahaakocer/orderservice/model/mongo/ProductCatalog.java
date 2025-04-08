@@ -25,12 +25,10 @@ public class ProductCatalog extends BaseModel{
     @Field("specification")
     private Specification specification;
 
-    @Field("product_type")
-    @JsonProperty("product_type")
+    @Field("productType")
     private String productType;
 
-    @Field("product_conf_type")
-    @JsonProperty("product_conf_type")
+    @Field("productConfType")
     private String productConfType;
 
 

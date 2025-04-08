@@ -6,8 +6,7 @@ import com.tahaakocer.orderservice.dto.response.CharacteristicGetAllResponse;
 import com.tahaakocer.orderservice.model.mongo.BaseModel;
 import com.tahaakocer.orderservice.model.mongo.Characteristic;
 import lombok.experimental.SuperBuilder;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -23,4 +22,7 @@ public interface CharacteristicMapper {
     List<CharacteristicDto> characteristicsToDtos(List<Characteristic> characteristics);
 
     List<CharacteristicGetAllResponse> characteristicDtoListToGetAllResponseList(List<CharacteristicDto> characteristics);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateCharacteristicFromDto(@MappingTarget Characteristic target, CharacteristicDto source);
 }

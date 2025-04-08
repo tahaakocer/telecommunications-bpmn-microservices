@@ -1,17 +1,15 @@
 package com.tahaakocer.camunda.service;
 
+import com.tahaakocer.camunda.config.ProcessMappingConfig;
+import com.tahaakocer.camunda.exception.GeneralException;
 import com.tahaakocer.camunda.exception.StartProcessException;
+import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,60 +18,81 @@ import java.util.Map;
 public class ProcessService {
     Logger logger = org.slf4j.LoggerFactory.getLogger(ProcessService.class);
     private final RuntimeService runtimeService;
-    private final RestTemplate restTemplate;
+    private final Keycloak keycloakClient;
+    private final ProcessMappingConfig processMapping;
 
-    @Value("${keycloak.client-id}")
-    private String clientId;
-
-    @Value("${keycloak.username}")
-    private String username;
-
-    @Value("${keycloak.password}")
-    private String password;
-
-    @Value("${keycloak.client-secret}")
-    private String clientSecret;
-
-    @Value("${keycloak.token.url}")
-    private String tokenUrl;
-
-    public ProcessService(RuntimeService runtimeService, RestTemplate restTemplate) {
+    public ProcessService(RuntimeService runtimeService,
+                          Keycloak keycloakClient, ProcessMappingConfig processMapping) {
         this.runtimeService = runtimeService;
-        this.restTemplate = restTemplate;
+        this.keycloakClient = keycloakClient;
+        this.processMapping = processMapping;
     }
 
-    public void startProcess(String processKey) {
+    public ProcessInstance startProcess(String orderType, String channel, Map<String, Object> variables) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-            form.add("grant_type", "password");
-            form.add("client_id", clientId);
-            form.add("username", username);
-            form.add("password", password);
-            form.add("client_secret", clientSecret);
+            String token = obtainAccessToken();
 
-            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(form, headers);
-            ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, requestEntity, Map.class);
-            Map body = response.getBody();
-            if (body == null || !body.containsKey("access_token")) {
-                throw new RuntimeException("Keycloak token alınamadı.");
+            String processKey = determineProcessKey(orderType, channel);
+            if (processKey == null) {
+                throw new StartProcessException("Belirtilen orderType ve channel için uygun process bulunamadı: " + orderType + ", " + channel);
             }
-            String accessToken = body.get("access_token").toString();
-            String refreshToken = body.get("refresh_token").toString();
 
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("accessToken", accessToken);
-            variables.put("refreshToken", refreshToken);
+            Map<String, Object> processVariables = new HashMap<>(variables);
+            processVariables.put("orderType", orderType);
+            processVariables.put("channel", channel);
 
-            variables.put("refreshUrl", tokenUrl);
+            String businessKey = generateBusinessKey(orderType, channel);
+            ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
+                    processKey,
+                    businessKey,
+                    processVariables
+            );
 
-            runtimeService.startProcessInstanceByKey(processKey, variables);
+            logger.info("Process başlatıldı. ProcessInstanceId: {}, BusinessKey: {}, OrderType: {}, Channel: {}",
+                    processInstance.getId(), businessKey, orderType, channel);
+
+            return processInstance;
         } catch (Exception e) {
-            logger.error("Process başlatılırken hata oluştu.", e);
-
+            logger.error("Process başlatılırken hata oluştu. OrderType: {}, Channel: {}", orderType, channel, e);
             throw new StartProcessException("Process başlatılırken hata oluştu: " + e.getMessage(), e);
         }
+    }
+
+    private String obtainAccessToken() {
+        try {
+            AccessTokenResponse tokenResponse = this.keycloakClient.tokenManager().getAccessToken();
+            String accessToken = tokenResponse.getToken();
+
+            logger.info("Yeni access token başarıyla alındı.");
+            return accessToken;
+        } catch (Exception e) {
+            logger.error("Keycloak'tan token alınırken hata oluştu: {}", e.getMessage());
+            throw new GeneralException("Yeni access token alınamadı.", e);
+        }
+    }
+
+
+    private String determineProcessKey(String orderType, String channel) {
+        Map<String, String> channelMap = processMapping.getMapping().get(orderType.toUpperCase());
+        if (channelMap == null) {
+            logger.warn("Konfigürasyonda orderType '{}' için mapping bulunamadı.", orderType);
+            return null;
+        }
+
+        String processKey = channelMap.get(channel.toUpperCase());
+        if (processKey == null) {
+            logger.warn("Konfigürasyonda orderType '{}' ve channel '{}' için mapping bulunamadı.", orderType, channel);
+        }
+
+        return processKey;
+    }
+
+    //gpt verdi. ne ise yaradıgını sonra arastir
+    private String generateBusinessKey(String orderType, String channel) {
+        return String.format("%s-%s-%d",
+                orderType.toUpperCase(),
+                channel.toUpperCase(),
+                System.currentTimeMillis());
     }
 }

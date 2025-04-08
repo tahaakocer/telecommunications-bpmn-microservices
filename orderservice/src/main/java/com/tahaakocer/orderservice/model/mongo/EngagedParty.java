@@ -18,27 +18,22 @@ public class EngagedParty extends BaseModel {
     @Field("tckn")
     private Long tckn;
 
-    @Field("first_name")
-    @JsonProperty("first_name")
+    @Field("firstName")
     private String firstName;
 
-    @Field("last_name")
-    @JsonProperty("last_name")
+    @Field("lastName")
     private String lastName;
 
-    @Field("phone_number")
-    @JsonProperty("phone_number")
+    @Field("phoneNumber")
     private Long phoneNumber;
 
     @Field("email")
     private String email;
 
-    @Field("keycloak_user_id")
-    @JsonProperty("keycloak_user_id")
+    @Field("keycloakUserId")
     private String keycloakUserId;
 
-    @Field("formatted_address")
-    @JsonProperty("formatted_address")
+    @Field("formattedAddress")
     private String formattedAddress;
 
     @Field("bbk")

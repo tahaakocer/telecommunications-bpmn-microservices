@@ -16,8 +16,7 @@ public class AccountRef {
     @Field("name")
     private String name;
 
-    @Field("account_code")
-    @JsonProperty("account_code")
+    @Field("accountCode")
     private Integer accountCode;
 
 }

@@ -52,6 +52,49 @@ keycloak:
   auth-server-url: ${ADMIN_AUTH_URL}
   token:
     url: ${JWT_ISSUER_URI}/protocol/openid-connect/token
+process:
+  mapping:
+    PRODUCT:
+      PHONE: phoneProductProcess
+      DEALER: dealerProductProcess
+      WEB: webProductProcess
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  okhttp:
+    enabled: true
+services:
+  order-request-service:
+    url: http://localhost:8282
+
+# Hata durumunda yeniden deneme
+resilience4j:
+  retry:
+    instances:
+      process-service:
+        maxRetryAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.io.IOException
+          - org.springframework.web.client.ResourceAccessException
+          - com.tahaakocer.orderservice.exception.GeneralException
+
+  # Feign Client için circuit breaker
+  circuitbreaker:
+    instances:
+      process-service:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 3
 server:
   port: 8181
 logging:

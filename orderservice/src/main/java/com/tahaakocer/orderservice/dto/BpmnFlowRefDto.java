@@ -6,23 +6,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BpmnFlowRefDto {
+@SuperBuilder
 
-    @JsonProperty("process_instance_id")
+public class BpmnFlowRefDto {
+    private UUID id;
     private String processInstanceId;
 
-    @JsonProperty("process_definition_name")
-    private String processDefinitionName;
+    private String processDefinitionId;
+    private String processBusinessKey;
 
-    @JsonProperty("current_activity_id")
-    private String currentActivityId;
-
-    @JsonProperty("current_activity_name")
-    private String currentActivityName;
 }

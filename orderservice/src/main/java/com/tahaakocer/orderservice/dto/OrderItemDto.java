@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -14,18 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@SuperBuilder
+
 public class OrderItemDto extends BaseDto{
     private String code;
     private List<CharacteristicDto> characteristics;
 
-    @JsonProperty("account_ref")
     private AccountRefDto accountRef;
 
     private ProductDto product;
 
-    @JsonProperty("bpmn_flow_ref")
     private BpmnFlowRefDto bpmnFlowRef;
-
-    @JsonProperty("order_item_type")
     private String orderItemType;
 }

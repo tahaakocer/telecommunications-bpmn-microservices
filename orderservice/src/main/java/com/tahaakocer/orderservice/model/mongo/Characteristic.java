@@ -27,8 +27,7 @@ public class Characteristic extends BaseModel {
     private String name;
     @Field("value")
     private Object value; //TODO String olarak da tutulabilir ??
-    @Field("source_type")
-    @JsonProperty("source_type")
+    @Field("sourceType")
     private String sourceType;
 
 }

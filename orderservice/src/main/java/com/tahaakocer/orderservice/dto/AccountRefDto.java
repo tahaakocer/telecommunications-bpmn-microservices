@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
@@ -14,9 +15,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@SuperBuilder
+
 public class AccountRefDto {
     private UUID id;
     private String name;
-    @JsonProperty("account_code")
     private Integer accountCode;
 }
