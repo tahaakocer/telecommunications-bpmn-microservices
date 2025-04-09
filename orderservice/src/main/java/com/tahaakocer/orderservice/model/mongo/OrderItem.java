@@ -3,16 +3,18 @@ package com.tahaakocer.orderservice.model.mongo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tahaakocer.orderservice.utils.Util;
 import jakarta.persistence.PrePersist;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
+@Document("orderItem")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItem extends BaseModel {
 
     @Field("code")
@@ -29,6 +31,9 @@ public class OrderItem extends BaseModel {
 
     @Field("bpmnFLowRef")
     private BpmnFlowRef bpmnFlowRef;
+
+    @Field("orderRequestRef")
+    private OrderRequestRef orderRequestRef;
 
     @Field("orderItemType")
     private String orderItemType;

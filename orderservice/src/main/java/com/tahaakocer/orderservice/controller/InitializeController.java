@@ -2,7 +2,6 @@ package com.tahaakocer.orderservice.controller;
 
 import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
-import com.tahaakocer.orderservice.dto.order.OrderRequestDto;
 import com.tahaakocer.orderservice.dto.order.OrderRequestResponse;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.dto.update.FieldUpdateRequest;

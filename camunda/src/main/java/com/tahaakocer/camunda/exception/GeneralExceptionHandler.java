@@ -13,9 +13,20 @@ public class GeneralExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GeneralExceptionHandler.class);
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<GeneralResponse<?>> handleGeneralException(Exception ex) {
+        GeneralResponse<?> errorResponse = GeneralResponse.builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+        log.error("{}:{}", errorResponse.getMessage(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(StartProcessException.class)
-    public ResponseEntity<GeneralResponse> handleStartProcessException(StartProcessException ex) {
-        GeneralResponse errorResponse = GeneralResponse.builder()
+    public ResponseEntity<GeneralResponse<?>> handleStartProcessException(StartProcessException ex) {
+        GeneralResponse<?> errorResponse = GeneralResponse.builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(ex.getMessage())
                 .data(null)
@@ -25,8 +36,8 @@ public class GeneralExceptionHandler {
     }
 
     @ExceptionHandler(GeneralException.class)
-    public ResponseEntity<GeneralResponse> handleGeneralException(GeneralException ex) {
-        GeneralResponse errorResponse = GeneralResponse.builder()
+    public ResponseEntity<GeneralResponse<?>> handleGeneralException(GeneralException ex) {
+        GeneralResponse<?> errorResponse = GeneralResponse.builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(ex.getMessage())
                 .data(null)

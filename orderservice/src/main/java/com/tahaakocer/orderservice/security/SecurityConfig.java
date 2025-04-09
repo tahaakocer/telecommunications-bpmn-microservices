@@ -33,6 +33,9 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/characteristic/**").hasRole("user")
+                        .requestMatchers("/api/initialize/**").hasRole("user")
+                        .requestMatchers("/api/specifications/**").hasRole("user")
+                        .requestMatchers("/api/product-catalog/**").hasRole("user")
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

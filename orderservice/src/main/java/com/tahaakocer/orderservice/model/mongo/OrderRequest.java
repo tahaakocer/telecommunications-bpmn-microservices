@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @EqualsAndHashCode(callSuper = true)
-@Document("order_request")
+@Document("orderRequest")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -20,5 +20,6 @@ public class OrderItemDto extends BaseDto {
     private AccountRefDto accountRef;
     private ProductDto product;
     private BpmnFlowRefDto bpmnFlowRef;
+    private OrderRequestRefDto orderRequestRef;
     private String orderItemType;
 }

@@ -52,12 +52,12 @@ keycloak:
   auth-server-url: ${ADMIN_AUTH_URL}
   token:
     url: ${JWT_ISSUER_URI}/protocol/openid-connect/token
+
 process:
   mapping:
     PRODUCT:
-      PHONE: phoneProductProcess
-      DEALER: dealerProductProcess
-      WEB: webProductProcess
+      STARTER: productOrderStarterProcess
+
 
 feign:
   client:
