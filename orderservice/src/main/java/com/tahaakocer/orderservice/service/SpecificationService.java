@@ -51,6 +51,11 @@ public class SpecificationService {
         return this.specificationMapper.entityToDto(saved);
     }
 
+    public List<SpecificationDto> searchSpecification(String query) {
+        List<Specification> specifications = this.specificationRepository.findBySpecificationsCodeContainingIgnoreCase(query);
+        log.info("Specifications found with count: {}", specifications.size());
+        return this.specificationMapper.entityToDtoList(specifications);
+    }
     public SpecificationDto getSpecificationById(UUID id) {
         Specification specification = this.specificationRepository.findById(id).orElseThrow(
                 () -> new GeneralException("Specification not found")
@@ -78,5 +83,10 @@ public class SpecificationService {
         );
         log.info("Specification deleted with id: {}", specification.getId());
         this.specificationRepository.delete(specification);
+    }
+
+    public List<SpecificationDto> createSpecificationBatch(List<SpecificationCreateRequest> requests) {
+
+        return requests.stream().map(this::createSpecification).toList();
     }
 }

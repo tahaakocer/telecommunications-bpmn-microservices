@@ -1,4 +1,4 @@
-package com.tahaakocer.camunda.config;
+package com.tahaakocer.orderservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +14,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                        .allowedOrigins("*","http://localhost:5173")
+                        .allowedMethods("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS");
             }
         };
     }

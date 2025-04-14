@@ -11,5 +11,6 @@ public class StartProcessResponse {
     private String processInstanceId;
     private String businessKey;
     private String processDefinitionId;
+    private String processBusinessKey;
     private String errorMessage;
 }

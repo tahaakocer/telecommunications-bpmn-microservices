@@ -32,6 +32,28 @@ public class SpecificationController {
                 .build()
         );
     }
+
+    @PostMapping("/create-batch")
+    public ResponseEntity<GeneralResponse<List<SpecificationDto>>> createSpecification(@RequestBody List<SpecificationCreateRequest> requests) {
+        List<SpecificationDto> specificationDtos = specificationService.createSpecificationBatch(requests);
+        return ResponseEntity.ok(GeneralResponse.<List<SpecificationDto>>builder()
+                .code(200)
+                .message("Specification created successfully")
+                .data(specificationDtos)
+                .build()
+        );
+    }
+    @GetMapping("/search")
+    public ResponseEntity<GeneralResponse<List<SpecificationDto>>> searchSpecifications(
+            @RequestParam String query
+    ) {
+        return ResponseEntity.ok(GeneralResponse.<List<SpecificationDto>>builder()
+                .code(200)
+                .message("Specifications searched successfully")
+                .data(specificationService.searchSpecification(query))
+                .build()
+        );
+    }
     @GetMapping("/get-all")
     public ResponseEntity<GeneralResponse<List<SpecificationDto>>> getAllSpecifications() {
         return ResponseEntity.ok(GeneralResponse.<List<SpecificationDto>>builder()

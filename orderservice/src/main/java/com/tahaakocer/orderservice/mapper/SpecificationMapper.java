@@ -14,4 +14,8 @@ public interface SpecificationMapper {
     Specification dtoToEntity(SpecificationDto specificationDto);
     SpecificationDto entityToDto(Specification saved);
     List<SpecificationDto> entityToDtoList(List<Specification> specifications);
+
+    List<Specification> dtoToEntityList(List<SpecificationDto> specificationDtos);
+
+
 }

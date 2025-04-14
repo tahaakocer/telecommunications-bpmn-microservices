@@ -1,18 +1,23 @@
 package com.tahaakocer.orderservice.service;
 
+import com.tahaakocer.orderservice.dto.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.ProductCatalogDto;
 import com.tahaakocer.orderservice.dto.SpecificationDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.ProductCatalogMapper;
+import com.tahaakocer.orderservice.mapper.SpecificationMapper;
+import com.tahaakocer.orderservice.model.mongo.Characteristic;
 import com.tahaakocer.orderservice.model.mongo.ProductCatalog;
 import com.tahaakocer.orderservice.repository.mongo.ProductCatalogRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import com.tahaakocer.orderservice.utils.PUUID;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -20,28 +25,69 @@ public class ProductCatalogService {
     private final ProductCatalogMapper productCatalogMapper;
     private final ProductCatalogRepository productCatalogRepository;
     private final SpecificationService specificationService;
+    private SpecificationMapper specificationMapper;
 
     public ProductCatalogService(ProductCatalogMapper productCatalogMapper,
                                  ProductCatalogRepository productCatalogRepository,
-                                 SpecificationService specificationService) {
+                                 SpecificationService specificationService, SpecificationMapper specificationMapper) {
         this.productCatalogMapper = productCatalogMapper;
         this.productCatalogRepository = productCatalogRepository;
         this.specificationService = specificationService;
+        this.specificationMapper = specificationMapper;
     }
 
+    @Transactional
     public ProductCatalogDto createProductCatalog(ProductCatalogDto productCatalogDto) {
-        if(productCatalogRepository.existsByCode(productCatalogDto.getCode())) {
+        if (productCatalogRepository.existsByCode(productCatalogDto.getCode())) {
             throw new GeneralException("Product Catalog with code " + productCatalogDto.getCode() + " already exists");
         }
-        productCatalogDto.setId(PUUID.randomUUID());
-        productCatalogDto.setCreatedBy(KeycloakUtil.getKeycloakUsername());
-        productCatalogDto.setCreateDate(LocalDateTime.now());
-        SpecificationDto specificationDto = specificationService.getSpecificationByCode(productCatalogDto.getSpecificationCode());
-        productCatalogDto.setSpecification(specificationDto);
-        ProductCatalog productCatalog = productCatalogMapper.productCatalogDtoToProductCatalog(productCatalogDto);
-        ProductCatalog saved = productCatalogRepository.save(productCatalog);
-        log.info("Product Catalog saved with id: {}", saved.getId());
-        return productCatalogMapper.productCatalogToProductCatalogDto(saved);
+
+        List<SpecificationDto> specificationDtos = new ArrayList<>();
+        final AtomicReference<String> productTypeRef = new AtomicReference<>();
+
+        for(SpecificationDto spec : productCatalogDto.getSpecifications()) {
+            SpecificationDto specFromService = this.specificationService.getSpecificationByCode(spec.getCode());
+
+            specFromService.getCharacteristics().forEach(serviceCharacteristic -> {
+                        if (serviceCharacteristic.getCode().equals("productType")) {
+                            productTypeRef.set((String) serviceCharacteristic.getValue());
+                        }
+
+                        spec.getCharacteristics().stream()
+                                .filter(inputCharacteristic ->
+                                        Objects.equals(serviceCharacteristic.getCode(), inputCharacteristic.getCode()))
+                                .findFirst()
+                                .ifPresent(matchingCharacteristic ->
+                                        serviceCharacteristic.setValue(matchingCharacteristic.getValue()));
+                    }
+            );
+            specificationDtos.add(specFromService);
+        }
+
+        String productType = productTypeRef.get();
+
+        ProductCatalog productCatalog = ProductCatalog.builder()
+                .id(UUID.randomUUID())
+                .code(productCatalogDto.getCode())
+                .name(productCatalogDto.getName())
+                .specifications(this.specificationMapper.dtoToEntityList(specificationDtos))
+                .productType(productType)
+                .productConfType(productCatalogDto.getProductConfType())
+                .createdBy(KeycloakUtil.getKeycloakUsername())
+                .createDate(LocalDateTime.now())
+                .lastModifiedBy(productCatalogDto.getCreatedBy())
+                .updateDate(productCatalogDto.getCreateDate())
+                .build();
+
+        productCatalog = productCatalogRepository.save(productCatalog);
+        log.info("Product Catalog created with id: {}", productCatalog.getId());
+        return productCatalogMapper.productCatalogToProductCatalogDto(productCatalog);
+    }
+
+    public List<ProductCatalogDto> searchProductCatalogs(String query) {
+        List<ProductCatalog> productCatalogs = productCatalogRepository.findByProductCatalogCodeAndNameContainingIgnoreCase(query);
+        log.info("Product Catalogs found: {}", productCatalogs.size());
+        return productCatalogMapper.productCatalogsToProductCatalogDtos(productCatalogs);
     }
 
     public ProductCatalogDto getProductCatalogById(UUID id) {
@@ -50,12 +96,14 @@ public class ProductCatalogService {
         log.info("Product Catalog found with id: {}", productCatalog.getId());
         return productCatalogMapper.productCatalogToProductCatalogDto(productCatalog);
     }
+
     public void deleteProductCatalogById(UUID id) {
         ProductCatalog productCatalog = productCatalogRepository.findById(id).orElseThrow(
                 () -> new GeneralException("Product Catalog not found"));
         log.info("Product Catalog deleted with id: {}", productCatalog.getId());
         productCatalogRepository.delete(productCatalog);
     }
+
     public ProductCatalogDto getProductCatalogByCode(String code) {
         ProductCatalog productCatalog = productCatalogRepository.findByCode(code).orElseThrow(
                 () -> new GeneralException("Product Catalog not found"));
@@ -68,5 +116,17 @@ public class ProductCatalogService {
                 () -> new GeneralException("Product Catalog not found"));
         log.info("Product Catalog deleted with code: {}", productCatalog.getCode());
         productCatalogRepository.delete(productCatalog);
+    }
+
+    public List<ProductCatalogDto> getAllProductCatalogs() {
+        List<ProductCatalog> productCatalogs = productCatalogRepository.findAll();
+        log.info("Product Catalogs found: {}", productCatalogs.size());
+        return productCatalogMapper.productCatalogsToProductCatalogDtos(productCatalogs);
+    }
+
+
+    @Transactional
+    public List<ProductCatalogDto> createProductCatalogBatch(List<ProductCatalogDto> productCatalogDtos) {
+        return productCatalogDtos.stream().map(this::createProductCatalog).toList();
     }
 }

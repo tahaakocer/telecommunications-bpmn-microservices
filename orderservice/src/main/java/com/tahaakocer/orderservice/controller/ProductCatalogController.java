@@ -8,6 +8,7 @@ import com.tahaakocer.orderservice.service.ProductCatalogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,6 +31,17 @@ public class ProductCatalogController {
                 .code(200)
                     .message("Product Catalog created successfully")
                         .data(productCatalog)
+                .build()
+        );
+    }
+    @PostMapping("/create-batch")
+    public ResponseEntity<GeneralResponse<List<ProductCatalogDto>>> createProductCatalog(@RequestBody List<ProductCatalogRequest> productCatalogRequests) {
+        List<ProductCatalogDto> productCatalogDtos = productCatalogMapper.productCatalogRequestToProductCatalogDtoList(productCatalogRequests);
+        List<ProductCatalogDto> productCatalogs = productCatalogService.createProductCatalogBatch(productCatalogDtos);
+        return ResponseEntity.ok(GeneralResponse.<List<ProductCatalogDto>>builder()
+                .code(200)
+                .message("Product Catalog created successfully")
+                .data(productCatalogs)
                 .build()
         );
     }
@@ -67,6 +79,24 @@ public class ProductCatalogController {
                 .code(200)
                 .message("Product Catalog deleted successfully")
                 .data(null)
+                .build());
+    }
+    @GetMapping("/get-all")
+    public ResponseEntity<GeneralResponse<List<ProductCatalogDto>>> getAllProductCatalogs() {
+        List<ProductCatalogDto> productCatalog = productCatalogService.getAllProductCatalogs();
+        return ResponseEntity.ok(GeneralResponse.<List<ProductCatalogDto>>builder()
+                .code(200)
+                .message("Product Catalog found successfully")
+                .data(productCatalog)
+                .build());
+    }
+    @GetMapping("/search")
+    public ResponseEntity<GeneralResponse<List<ProductCatalogDto>>> searchProductCatalogs(@RequestParam String query) {
+        List<ProductCatalogDto> productCatalog = productCatalogService.searchProductCatalogs(query);
+        return ResponseEntity.ok(GeneralResponse.<List<ProductCatalogDto>>builder()
+                .code(200)
+                .message("Product Catalog searched successfully")
+                .data(productCatalog)
                 .build());
     }
 }

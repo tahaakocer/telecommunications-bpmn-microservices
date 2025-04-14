@@ -4,9 +4,11 @@ import com.tahaakocer.orderservice.client.ProcessServiceClient;
 import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
 import com.tahaakocer.orderservice.dto.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.ProductCatalogDto;
+import com.tahaakocer.orderservice.dto.SpecificationDto;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
+import com.tahaakocer.orderservice.dto.order.OrderRequestDto;
 import com.tahaakocer.orderservice.dto.process.StartProcessResponse;
-import com.tahaakocer.orderservice.dto.order.OrderRequestResponse;
+import com.tahaakocer.orderservice.dto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
@@ -69,19 +71,28 @@ public class OrderRequestService {
         orderRequest.setCreateDate(order.getCreateDate());
 
         log.info("Created order request: {}", orderRequest);
-
+        OrderRequestResponse response;
         try {
-            this.orderRequestRepository.save(orderRequest);
-            startOrderProcess(orderRequest, orderType);
+            OrderRequest savedOrderRequest = this.orderRequestRepository.save(orderRequest);
+            StartProcessResponse startOrderProcessResponse =  startOrderProcess(orderRequest, orderType);
+            response = OrderRequestResponse.builder()
+                    .code(savedOrderRequest.getCode())
+                    .channel(savedOrderRequest.getChannel())
+                    .orderRequestId(savedOrderRequest.getId())
+                    .processInstanceId(startOrderProcessResponse.getProcessInstanceId())
+                    .processDefinitionId(startOrderProcessResponse.getProcessDefinitionId())
+                    .processBusinessKey(startOrderProcessResponse.getProcessBusinessKey())
+                    .processBusinessKey(startOrderProcessResponse.getProcessBusinessKey())
+                    .build();
         } catch (Exception e) {
             log.error("Error starting process for order request ID: {}. Error: {}", orderRequest.getId(), e.getMessage(), e);
             throw new GeneralException("Failed to start process: " + e.getMessage(), e);
         }
 
-        return this.orderRequestMapper.entityToResponse(orderRequest);
+        return response;
     }
 
-    private void startOrderProcess(OrderRequest orderRequest, String processOrderType) {
+    private StartProcessResponse startOrderProcess(OrderRequest orderRequest, String processOrderType) {
         log.info("Starting process for order request ID: {}", orderRequest.getId());
 
         // Süreç değişkenleri hazırlama
@@ -100,6 +111,7 @@ public class OrderRequestService {
             if (responseEntity.getBody() == null  || responseEntity.getBody().getData() == null) {
                 throw new GeneralException("Process service response is empty or invalid");
             }
+            return responseEntity.getBody().getData();
         } catch (Exception e) {
             log.error("Failed to start process for order request ID: {}. Error: {}", orderRequest.getId(), e.getMessage(), e);
             throw new GeneralException("Failed to start process: " + e.getMessage(), e);
@@ -123,7 +135,7 @@ public class OrderRequestService {
 //        );
 //    }
 
-    public OrderRequestResponse updateOrderField(UUID orderRequestId, String fieldPath, Object value) {
+    public OrderRequestDto updateOrderField(UUID orderRequestId, String fieldPath, Object value) {
         log.info("Updating order field {} for order request ID: {}", fieldPath, orderRequestId);
 
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
@@ -139,12 +151,12 @@ public class OrderRequestService {
         OrderRequest savedOrderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
 
-        OrderRequestResponse updatedOrder = this.orderRequestMapper.entityToResponse(savedOrderRequest);
+        OrderRequestDto updatedOrder = this.orderRequestMapper.entityToDto(savedOrderRequest);
         log.info("Updated order request: {}", updatedOrder);
         return updatedOrder;
     }
 
-    public OrderRequestResponse updateOrderFields(UUID orderRequestId, Map<String, Object> fieldsToUpdate) {
+    public OrderRequestDto updateOrderFields(UUID orderRequestId, Map<String, Object> fieldsToUpdate) {
         log.info("Updating multiple fields for order request ID: {}", orderRequestId);
 
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
@@ -164,18 +176,18 @@ public class OrderRequestService {
         OrderRequest savedOrderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
 
-        OrderRequestResponse updatedOrder = this.orderRequestMapper.entityToResponse(savedOrderRequest);
+        OrderRequestDto updatedOrder = this.orderRequestMapper.entityToDto(savedOrderRequest);
         log.info("Updated order request: {}", updatedOrder);
         return updatedOrder;
     }
 
-    public OrderRequestResponse getOrderRequest(UUID orderRequestId) {
+    public OrderRequestDto getOrderRequest(UUID orderRequestId) {
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
-        return this.orderRequestMapper.entityToResponse(orderRequest);
+        return this.orderRequestMapper.entityToDto(orderRequest);
     }
 
-    public OrderRequestResponse updateProduct(UUID orderRequestId, String productCatalogCode, boolean willBeDelete) {
+    public OrderRequestDto updateProduct(UUID orderRequestId, String productCatalogCode, boolean willBeDelete) {
         if (willBeDelete) {
             return deleteProduct(orderRequestId, productCatalogCode);
         } else {
@@ -183,7 +195,7 @@ public class OrderRequestService {
         }
     }
 
-    private OrderRequestResponse addProducts(UUID orderRequestId, String productCatalogCode) {
+    private OrderRequestDto addProducts(UUID orderRequestId, String productCatalogCode) {
         ProductCatalogDto productCatalogDto = this.productCatalogService.getProductCatalogByCode(productCatalogCode);
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
@@ -193,7 +205,8 @@ public class OrderRequestService {
             if(products == null) products = new ArrayList<>();
             Product product = new Product();
             product.setName(productCatalogDto.getName());
-            List<CharacteristicDto> characteristicDtos = productCatalogDto.getSpecification().getCharacteristics();
+            List<CharacteristicDto> characteristicDtos = productCatalogDto .getSpecifications()
+                    .stream().map(SpecificationDto::getCharacteristics).flatMap(List::stream).toList();
             product.setCharacteristics(characteristicDtos.stream().map(characteristicDto ->
                     Characteristic.builder()
                             .id(characteristicDto.getId())
@@ -224,10 +237,10 @@ public class OrderRequestService {
             throw new GeneralException(e.getMessage());
         }
 
-        return this.orderRequestMapper.entityToResponse(orderRequest);
+        return this.orderRequestMapper.entityToDto(orderRequest);
     }
 
-    private OrderRequestResponse deleteProduct(UUID orderRequestId, String productCatalogCode) {
+    private OrderRequestDto deleteProduct(UUID orderRequestId, String productCatalogCode) {
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
         try {
@@ -235,14 +248,14 @@ public class OrderRequestService {
                 productOrder.getProducts().removeIf(product -> product.getMainProductCode().equals(productCatalogCode));
                 orderRequestRepository.save(orderRequest);
                 log.info("Updated order request: {}", orderRequest);
-                return this.orderRequestMapper.entityToResponse(orderRequest);
+                return this.orderRequestMapper.entityToDto(orderRequest);
             }
 
         } catch (Exception e) {
             log.error("Error deleting product: {}", e.getMessage());
             throw new GeneralException(e.getMessage());
         }
-        return this.orderRequestMapper.entityToResponse(orderRequest);
+        return this.orderRequestMapper.entityToDto(orderRequest);
     }
 
     public OrderRequestResponse updateOrderRequest(UUID orderRequestId, OrderUpdateDto orderUpdateDto) {

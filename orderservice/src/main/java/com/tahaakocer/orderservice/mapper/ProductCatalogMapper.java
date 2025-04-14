@@ -7,6 +7,8 @@ import lombok.experimental.SuperBuilder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",uses = SuperBuilder.class)
 public interface ProductCatalogMapper {
 
@@ -15,4 +17,8 @@ public interface ProductCatalogMapper {
     ProductCatalogDto productCatalogToProductCatalogDto(ProductCatalog saved);
 
     ProductCatalogDto productCatalogRequestToProductCatalogDto(ProductCatalogRequest productCatalogRequest);
+
+    List<ProductCatalogDto> productCatalogsToProductCatalogDtos(List<ProductCatalog> productCatalogs);
+
+    List<ProductCatalogDto> productCatalogRequestToProductCatalogDtoList(List<ProductCatalogRequest> productCatalogRequests);
 }

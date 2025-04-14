@@ -11,6 +11,9 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Document("productCatalog")
@@ -24,8 +27,8 @@ public class ProductCatalog extends BaseModel{
     @Field("name")
     private String name;
 
-    @Field("specification")
-    private Specification specification;
+    @Field("specifications")
+    private List<Specification> specifications;
 
     @Field("productType")
     private String productType;

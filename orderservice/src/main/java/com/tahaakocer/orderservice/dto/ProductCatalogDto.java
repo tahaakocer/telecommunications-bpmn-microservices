@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,8 +19,7 @@ import lombok.experimental.SuperBuilder;
 public class ProductCatalogDto extends BaseDto {
     private String code;
     private String name;
-    private SpecificationDto specification;
-    private String specificationCode;
+    private List<SpecificationDto> specifications;
     private String productType;
     private String productConfType;
 

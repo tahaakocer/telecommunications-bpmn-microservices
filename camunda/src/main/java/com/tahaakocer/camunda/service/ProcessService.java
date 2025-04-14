@@ -14,7 +14,6 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -36,7 +35,6 @@ public class ProcessService {
         this.keycloakClient = keycloakClient;
         this.processMapping = processMapping;
     }
-
     public ProcessInstance startProcess(String orderType, String channel, Map<String, Object> variables) {
         try {
 
@@ -67,7 +65,6 @@ public class ProcessService {
             throw new StartProcessException("Process başlatılırken hata oluştu: " + e.getMessage(), e);
         }
     }
-
     private String obtainAccessToken() {
         try {
             AccessTokenResponse tokenResponse = this.keycloakClient.tokenManager().getAccessToken();
@@ -80,7 +77,6 @@ public class ProcessService {
             throw new GeneralException("Yeni access token alınamadı.", e);
         }
     }
-
     private String determineProcessKey(String orderType, String channel) {
         Map<String, String> channelMap = processMapping.getMapping().get(orderType.toUpperCase());
         if (channelMap == null) {
@@ -95,7 +91,6 @@ public class ProcessService {
 
         return processKey;
     }
-
     //gpt verdi. ne ise yaradıgını sonra arastir
     private String generateBusinessKey(String orderType, String channel) {
         return String.format("%s-%s-%d",
@@ -103,7 +98,6 @@ public class ProcessService {
                 channel.toUpperCase(),
                 System.currentTimeMillis());
     }
-
     public List<TaskDto> getCurrentTaskByProcessInstanceId(String processInstanceId, String businessKey) {
         try {
             List<Task> tasks;
@@ -144,7 +138,6 @@ public class ProcessService {
             throw new GeneralException("Task listesi alınırken hata oluştu: " + e.getMessage(), e);
         }
     }
-
     public void completeTask(String taskId, Map<String, Object> variables) {
         try {
             taskService.complete(taskId, variables);
@@ -213,7 +206,6 @@ public class ProcessService {
             throw new GeneralException("Error sending message to process instance: " + e.getMessage(), e);
         }
     }
-
     private MessageResponse sendMessageByBusinessKey(String businessKey, String messageName, Map<String, Object> variables) {
         try {
 
@@ -246,4 +238,5 @@ public class ProcessService {
             throw new GeneralException("Error sending message to process with business key: " + e.getMessage(), e);
         }
     }
+
 }

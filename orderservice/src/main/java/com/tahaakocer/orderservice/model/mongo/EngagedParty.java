@@ -38,6 +38,4 @@ public class EngagedParty extends BaseModel {
 
     @Field("bbk")
     private Integer bbk;
-
-
 }

@@ -13,10 +13,11 @@ public class AccountRef {
     @Id
     private UUID id;
 
-    @Field("name")
-    private String name;
+    @Field("accountId")
+    private UUID accountId;
 
     @Field("accountCode")
-    private Integer accountCode;
+    private String accountCode;
+
 
 }

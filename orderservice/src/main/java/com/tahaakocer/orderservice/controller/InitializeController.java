@@ -2,7 +2,8 @@ package com.tahaakocer.orderservice.controller;
 
 import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
-import com.tahaakocer.orderservice.dto.order.OrderRequestResponse;
+import com.tahaakocer.orderservice.dto.order.OrderRequestDto;
+import com.tahaakocer.orderservice.dto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.dto.update.FieldUpdateRequest;
 import com.tahaakocer.orderservice.dto.update.MultiFieldUpdateRequest;
@@ -61,19 +62,19 @@ public class InitializeController {
     }
 
     @PutMapping("/{orderRequestId}/update-field")
-    public ResponseEntity<GeneralResponse<OrderRequestResponse>> updateField(
+    public ResponseEntity<GeneralResponse<OrderRequestDto>> updateField(
             @PathVariable UUID orderRequestId,
             @RequestBody FieldUpdateRequest request) {
 
         log.info("Received request to update field {} in order {}", request.getFieldPath(), orderRequestId);
 
-        OrderRequestResponse updatedOrder = this.orderRequestService.updateOrderField(
+        OrderRequestDto updatedOrder = this.orderRequestService.updateOrderField(
                 orderRequestId,
                 request.getFieldPath(),
                 request.getValue()
         );
 
-        return ResponseEntity.ok(GeneralResponse.<OrderRequestResponse>builder()
+        return ResponseEntity.ok(GeneralResponse.<OrderRequestDto>builder()
                 .code(HttpStatus.OK.value())
                 .message("Field updated successfully")
                 .data(updatedOrder)
@@ -83,18 +84,18 @@ public class InitializeController {
 
     @PutMapping("/{orderRequestId}/batch-update")
 
-    public ResponseEntity<GeneralResponse<OrderRequestResponse>> updateMultipleFields(
+    public ResponseEntity<GeneralResponse<OrderRequestDto>> updateMultipleFields(
             @PathVariable UUID orderRequestId,
             @RequestBody MultiFieldUpdateRequest request) {
         log.info("Received request to update multiple fields in order {}", orderRequestId);
 
-        OrderRequestResponse updatedOrder = this.orderRequestService.updateOrderFields(
+        OrderRequestDto updatedOrder = this.orderRequestService.updateOrderFields(
                 orderRequestId,
                 request.getFieldsToUpdate()
         );
 
 
-        return ResponseEntity.ok(GeneralResponse.<OrderRequestResponse>builder()
+        return ResponseEntity.ok(GeneralResponse.<OrderRequestDto>builder()
                 .code(HttpStatus.OK.value())
                 .message("Field updated successfully")
                 .data(updatedOrder)
@@ -103,18 +104,18 @@ public class InitializeController {
     }
 
     @PutMapping("/{orderRequestId}/update-products")
-    public ResponseEntity<GeneralResponse<OrderRequestResponse>> updateProducts(
+    public ResponseEntity<GeneralResponse<OrderRequestDto>> updateProducts(
             @PathVariable UUID orderRequestId,
             @RequestParam String productCatalogCode,
             @RequestParam(defaultValue = "false") boolean willBeDelete) {
         log.info("Received request to update products in order {}", orderRequestId);
-        OrderRequestResponse updatedOrder = this.orderRequestService.updateProduct(
+        OrderRequestDto updatedOrder = this.orderRequestService.updateProduct(
                 orderRequestId,
                 productCatalogCode,
                 willBeDelete
         );
 
-        return ResponseEntity.ok(GeneralResponse.<OrderRequestResponse>builder()
+        return ResponseEntity.ok(GeneralResponse.<OrderRequestDto>builder()
                 .code(HttpStatus.OK.value())
                 .message("Field updated successfully")
                 .data(updatedOrder)
@@ -142,12 +143,12 @@ public class InitializeController {
 
 
     @GetMapping("/{orderRequestId}/get-order-request")
-    public ResponseEntity<GeneralResponse<OrderRequestResponse>> getOrderRequest(
+    public ResponseEntity<GeneralResponse<OrderRequestDto>> getOrderRequest(
             @PathVariable UUID orderRequestId
     ) {
         log.info("Received request to get order {}", orderRequestId);
-        OrderRequestResponse orderRequestResponse = this.orderRequestService.getOrderRequest(orderRequestId);
-        return ResponseEntity.ok(GeneralResponse.<OrderRequestResponse>builder()
+        OrderRequestDto orderRequestResponse = this.orderRequestService.getOrderRequest(orderRequestId);
+        return ResponseEntity.ok(GeneralResponse.<OrderRequestDto>builder()
                 .code(HttpStatus.OK.value())
                 .message("Order request retrieved successfully")
                 .data(orderRequestResponse)

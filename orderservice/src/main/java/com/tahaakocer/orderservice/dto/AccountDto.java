@@ -1,8 +1,7 @@
-package com.tahaakocer.orderservice.dto.order;
+package com.tahaakocer.orderservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tahaakocer.orderservice.dto.BaseDto;
+import com.tahaakocer.orderservice.model.mongo.OrderRequestRef;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +13,11 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderRequestDto extends BaseDto {
-    private String code;
-    private String channel;
-    private BaseOrderDto baseOrder;
+public class AccountDto extends BaseDto {
+    private String accountName;
+    private String accountCode;
+    private String formattedBillAddress;
+
+    private OrderRequestRef orderRequestRef;
 }
