@@ -44,7 +44,7 @@ public class InitializeController {
                 .build());
     }
 
-    @PatchMapping("/{orderRequestId}/update-order-request")
+    @PostMapping("/{orderRequestId}/update-order-request")
     public ResponseEntity<GeneralResponse<OrderRequestResponse>> updateOrderRequest(
             @PathVariable UUID orderRequestId,
             @RequestBody OrderUpdateDto orderUpdateDto

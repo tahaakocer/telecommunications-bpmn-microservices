@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface OrderRequestServiceClient {
 
 
-    @PatchMapping("/{orderRequestId}/update-order-request")
+    @PostMapping("/api/initialize/{orderRequestId}/update-order-request")
     ResponseEntity<GeneralResponse<OrderRequestResponse>> updateOrderRequest(
             @PathVariable UUID orderRequestId,
             @RequestBody OrderUpdateDto orderUpdateDto

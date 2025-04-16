@@ -18,4 +18,6 @@ public interface ProductCatalogRepository extends MongoRepository<ProductCatalog
 
     @Query(value = "{ 'code' : { $regex: ?0, $options: 'i' } }", fields = "{ 'code': 1, 'name': 1, '_id': 0 }")
     List<ProductCatalog> findByProductCatalogCodeAndNameContainingIgnoreCase(String query);
+
+
 }

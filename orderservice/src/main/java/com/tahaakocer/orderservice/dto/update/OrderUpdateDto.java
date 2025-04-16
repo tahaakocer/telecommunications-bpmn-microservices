@@ -24,6 +24,7 @@ public class OrderUpdateDto {
     private List<OrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
     private Boolean isDraft;
+    private AddressDto address;
 
     private List<ProductDto> products;
     private ProductDto sourceProduct;

@@ -90,6 +90,16 @@ public class ProductCatalogController {
                 .data(productCatalog)
                 .build());
     }
+    @GetMapping("/get-by-bbk")
+    public ResponseEntity<GeneralResponse<List<ProductCatalogDto>>> getProductCatalogByBbk(@RequestParam Integer bbk) {
+        List<ProductCatalogDto> productCatalog = productCatalogService.getProductCatalogsByBbk(bbk);
+        return ResponseEntity.ok(GeneralResponse.<List<ProductCatalogDto>>builder()
+                .code(200)
+                .message("Product Catalog found successfully")
+                .data(productCatalog)
+                .build());
+    }
+
     @GetMapping("/search")
     public ResponseEntity<GeneralResponse<List<ProductCatalogDto>>> searchProductCatalogs(@RequestParam String query) {
         List<ProductCatalogDto> productCatalog = productCatalogService.searchProductCatalogs(query);

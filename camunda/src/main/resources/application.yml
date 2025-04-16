@@ -84,7 +84,7 @@ resilience4j:
         retryExceptions:
           - java.io.IOException
           - org.springframework.web.client.ResourceAccessException
-          - com.tahaakocer.orderservice.exception.GeneralException
+          - com.tahaakocer.camunda.exception.GeneralException
 
   # Feign Client için circuit breaker
   circuitbreaker:

@@ -54,7 +54,9 @@ keycloak:
 # Süreç servisi için FeignClient ayarları
 services:
   process-service:
-    url: http://localhost:8181
+    url: http://localhost:8181/api/starter-process
+  infrastructure-service:
+    url: http://localhost:8383/api/infrastructure-service
 
 # Feign Client için ayarlar
 feign:

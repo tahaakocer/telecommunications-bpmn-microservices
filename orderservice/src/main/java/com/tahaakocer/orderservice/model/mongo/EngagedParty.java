@@ -24,6 +24,9 @@ public class EngagedParty extends BaseModel {
     @Field("lastName")
     private String lastName;
 
+    @Field("birthYear")
+    private Integer birthYear;
+
     @Field("phoneNumber")
     private Long phoneNumber;
 
@@ -32,6 +35,9 @@ public class EngagedParty extends BaseModel {
 
     @Field("keycloakUserId")
     private String keycloakUserId;
+
+    @Field("address")
+    private Address address;
 
     @Field("formattedAddress")
     private String formattedAddress;
