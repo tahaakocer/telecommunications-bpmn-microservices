@@ -48,6 +48,7 @@ public class BaseOrder extends BaseModel {
     @Field("orderType")
     private String orderType;
 
+
     @Field("isDraft")
     private Boolean isDraft;
 

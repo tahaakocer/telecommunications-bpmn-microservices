@@ -11,8 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderRequestDto extends BaseDto{
+public class OrderRequestDto {
     private String code;
     private String channel;
     private BaseOrderDto baseOrder;
+    private ActiveStatusDefinedByDto activeStatusDefinedBy;
+
 }

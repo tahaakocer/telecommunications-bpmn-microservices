@@ -20,4 +20,5 @@ public interface ProductCatalogRepository extends MongoRepository<ProductCatalog
     List<ProductCatalog> findByProductCatalogCodeAndNameContainingIgnoreCase(String query);
 
 
+    List<ProductCatalog> findByProductConfType(String productConfType);
 }

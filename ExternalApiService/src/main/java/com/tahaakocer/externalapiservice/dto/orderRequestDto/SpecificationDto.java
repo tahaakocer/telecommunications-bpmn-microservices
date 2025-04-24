@@ -1,6 +1,5 @@
 package com.tahaakocer.externalapiservice.dto.orderRequestDto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

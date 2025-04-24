@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Document(collection = "product")
 public class Product extends BaseModel {
 
     @Field("code")
@@ -37,6 +39,7 @@ public class Product extends BaseModel {
     @Field("productConfType")
     private String productConfType;
 
+    private OrderRequestRef orderRequestRef;
 
     @PrePersist
     public void prePersist() {

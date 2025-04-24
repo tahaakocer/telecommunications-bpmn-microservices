@@ -5,18 +5,26 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@Builder
 public class OrderRequestRef{
     @Id
     private UUID id;
-    @Field("orderRequestId")
+
     private UUID orderRequestId;
-    @Field("code")
+
     private String code;
-    @Field("orderType")
+
+    private LocalDateTime orderDate;
+
     private String orderType;
-    @Field("channel")
+
+    private BpmnFlowRef bpmnFlowRef;
+
     private String channel;
+
+    private Boolean isDraft;
 }

@@ -1,16 +1,20 @@
 package com.tahaakocer.orderservice.initializer.impl;
 
+import com.tahaakocer.orderservice.dto.OrderRequestRefDto;
 import com.tahaakocer.orderservice.dto.ProductDto;
 import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.ProductMapper;
+import com.tahaakocer.orderservice.model.mongo.OrderRequestRef;
 import com.tahaakocer.orderservice.model.mongo.Product;
 import com.tahaakocer.orderservice.model.mongo.OrderRequest;
 import com.tahaakocer.orderservice.model.mongo.ProductOrder;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
+import com.tahaakocer.orderservice.repository.mongo.ProductRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -23,11 +27,14 @@ import java.util.stream.Collectors;
 public class ProductStrategy implements OrderUpdateStrategy {
     private final ProductMapper productMapper;
     private final OrderRequestRepository orderRequestRepository;
+    private final ProductRepository productRepository;
 
     public ProductStrategy(ProductMapper productMapper,
-                           OrderRequestRepository orderRequestRepository) {
+                           OrderRequestRepository orderRequestRepository,
+                           ProductRepository productRepository) {
         this.productMapper = productMapper;
         this.orderRequestRepository = orderRequestRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -47,12 +54,11 @@ public class ProductStrategy implements OrderUpdateStrategy {
         if (!canHandle(updateDTO)) return;
 
         try {
-            if (!(order.getBaseOrder() instanceof ProductOrder)) {
+            if (!(order.getBaseOrder() instanceof ProductOrder productOrder)) {
                 log.error("BaseOrder is not a ProductOrder");
                 throw new GeneralException("BaseOrder is not a ProductOrder");
             }
 
-            ProductOrder productOrder = (ProductOrder) order.getBaseOrder();
             List<Product> existingProducts = productOrder.getProducts();
             if (existingProducts == null) {
                 existingProducts = new ArrayList<>();
@@ -68,12 +74,26 @@ public class ProductStrategy implements OrderUpdateStrategy {
                 if (productDto.getId() != null && productMap.containsKey(productDto.getId())) {
                     Product existingProduct = productMap.get(productDto.getId());
                     updateProductFromDto(existingProduct, productDto);
+                    this.productRepository.save(existingProduct);
+
                 } else {
                     Product newProduct = new Product();
                     newProduct.setId(UUID.randomUUID());
                     updateProductFromDto(newProduct, productDto);
                     newProduct.setCreatedBy(KeycloakUtil.getKeycloakUsername());
                     newProduct.setCreateDate(LocalDateTime.now());
+                    OrderRequestRef orderRequestRef = OrderRequestRef.builder()
+                            .id(UUID.randomUUID())
+                            .orderRequestId(order.getId())
+                            .code(order.getCode())
+                            .orderDate(order.getCreateDate())
+                            .orderType(order.getBaseOrder().getOrderType())
+                            .bpmnFlowRef(order.getBaseOrder().getBpmnFlowRef())
+                            .channel(order.getChannel())
+                            .isDraft(order.getBaseOrder().getIsDraft())
+                            .build();
+                    newProduct.setOrderRequestRef(orderRequestRef);
+                    this.productRepository.save(newProduct);
                     existingProducts.add(newProduct);
                 }
             }
@@ -115,6 +135,18 @@ public class ProductStrategy implements OrderUpdateStrategy {
                 updateProductFromDto(product, productDto);
                 product.setCreatedBy(KeycloakUtil.getKeycloakUsername());
                 product.setCreateDate(LocalDateTime.now());
+                OrderRequestRef orderRequestRef = OrderRequestRef.builder()
+                        .id(UUID.randomUUID())
+                        .orderRequestId(order.getId())
+                        .code(order.getCode())
+                        .orderDate(order.getCreateDate())
+                        .orderType(order.getBaseOrder().getOrderType())
+                        .bpmnFlowRef(order.getBaseOrder().getBpmnFlowRef())
+                        .channel(order.getChannel())
+                        .isDraft(order.getBaseOrder().getIsDraft())
+                        .build();
+                product.setOrderRequestRef(orderRequestRef);
+                this.productRepository.save(product);
                 products.add(product);
             }
 

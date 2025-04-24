@@ -1,6 +1,7 @@
 package com.tahaakocer.orderservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tahaakocer.orderservice.model.mongo.OrderRequestRef;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,7 @@ public class ProductDto extends BaseDto {
     private UUID productCatalogId;
     private String productType;
     private String productConfType;
+    private OrderRequestRefDto orderRequestRef;
+
 
 }

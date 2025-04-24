@@ -2,6 +2,7 @@ package com.tahaakocer.camunda.client;
 
 import com.tahaakocer.camunda.dto.GeneralResponse;
 import com.tahaakocer.camunda.dto.orderRequestDto.BpmnFlowRefDto;
+import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestDto;
 import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestResponse;
 import com.tahaakocer.camunda.dto.orderRequestDto.OrderUpdateDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,5 +25,9 @@ public interface OrderRequestServiceClient {
     ResponseEntity<GeneralResponse<OrderRequestResponse>> updateOrderStatus(
             @PathVariable UUID orderRequestId,
             @RequestBody BpmnFlowRefDto bpmnFlowRefDto
+    );
+    @GetMapping("/api/initialize/{orderRequestId}/get-order-request")
+    ResponseEntity<GeneralResponse<OrderRequestDto>> getOrderRequest(
+            @PathVariable UUID orderRequestId
     );
 }

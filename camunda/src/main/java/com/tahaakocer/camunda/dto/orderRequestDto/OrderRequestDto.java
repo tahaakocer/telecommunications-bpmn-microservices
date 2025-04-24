@@ -16,4 +16,6 @@ public class OrderRequestDto {
     private String code;
     private String channel;
     private BaseOrderDto baseOrder;
+    private ActiveStatusDefinedByDto activeStatusDefinedBy;
+
 }

@@ -22,5 +22,6 @@ public class ProductDto extends BaseDto {
     private UUID productCatalogId;
     private String productType;
     private String productConfType;
+    private OrderRequestRefDto orderRequestRef;
 
 }

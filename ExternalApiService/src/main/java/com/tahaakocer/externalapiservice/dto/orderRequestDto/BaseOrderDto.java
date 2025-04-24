@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BaseOrderDto extends BaseDto {
+public class BaseOrderDto extends BaseDto{
 
     private String code;
     private EngagedPartyDto engagedParty;

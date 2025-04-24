@@ -2,6 +2,7 @@ package com.tahaakocer.orderservice.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tahaakocer.orderservice.dto.*;
+import com.tahaakocer.orderservice.model.mongo.ActiveStatusDefinedBy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

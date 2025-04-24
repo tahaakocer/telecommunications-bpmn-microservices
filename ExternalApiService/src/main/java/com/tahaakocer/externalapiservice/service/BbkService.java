@@ -9,16 +9,13 @@ import com.tahaakocer.externalapiservice.exception.GeneralException;
 import com.tahaakocer.externalapiservice.mapper.AddressMapper;
 import com.tahaakocer.externalapiservice.util.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 

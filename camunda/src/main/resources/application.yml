@@ -56,8 +56,12 @@ keycloak:
 process:
   mapping:
     PRODUCT:
-      STARTER: productOrderStarterProcess
-
+      CALL-CENTER:
+        STARTER: productOrderStarterProcess
+        ORDER: productOrderProcess
+      WEB:
+        STARTER: productOrderStarterProcess
+        ORDER: productOrderProcess
 
 feign:
   client:

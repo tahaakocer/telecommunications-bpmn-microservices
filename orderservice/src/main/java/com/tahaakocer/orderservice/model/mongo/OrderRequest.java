@@ -23,7 +23,8 @@ public class OrderRequest extends BaseModel {
     private String channel;
     @Field("baseOrder")
     private BaseOrder baseOrder;
-
+    @Field("activeStatusDefinedBy")
+    private ActiveStatusDefinedBy activeStatusDefinedBy;
     @PrePersist
     public void prePersist() {
         this.code = Util.generateRandomCode("ORDRQ");

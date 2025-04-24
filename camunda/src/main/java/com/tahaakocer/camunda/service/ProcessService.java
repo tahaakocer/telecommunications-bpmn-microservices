@@ -1,10 +1,17 @@
 package com.tahaakocer.camunda.service;
 
+import com.tahaakocer.camunda.client.OrderRequestServiceClient;
 import com.tahaakocer.camunda.config.ProcessMappingConfig;
 import com.tahaakocer.camunda.dto.MessageResponse;
+import com.tahaakocer.camunda.dto.OrderRequest;
+import com.tahaakocer.camunda.dto.ProcessDto;
 import com.tahaakocer.camunda.dto.TaskDto;
+import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestDto;
 import com.tahaakocer.camunda.exception.GeneralException;
 import com.tahaakocer.camunda.exception.StartProcessException;
+import com.tahaakocer.camunda.mapper.ProcessMapper;
+import com.tahaakocer.camunda.model.ProcessEntity;
+import com.tahaakocer.camunda.repository.ProcessRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -16,9 +23,8 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,27 +33,42 @@ public class ProcessService {
     private final TaskService taskService;
     private final Keycloak keycloakClient;
     private final ProcessMappingConfig processMapping;
+    private final OrderRequestServiceClient orderRequestServiceClient;
+    private final ProcessRepository processRepository;
+    private final ProcessMapper processMapper;
 
-    public ProcessService(RuntimeService runtimeService, TaskService taskService,
-                          Keycloak keycloakClient, ProcessMappingConfig processMapping) {
+    public ProcessService(RuntimeService runtimeService,
+                          TaskService taskService,
+                          Keycloak keycloakClient,
+                          ProcessMappingConfig processMapping,
+                          OrderRequestServiceClient orderRequestServiceClient,
+                          ProcessRepository processRepository,
+                          ProcessMapper processMapper) {
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.keycloakClient = keycloakClient;
         this.processMapping = processMapping;
+        this.orderRequestServiceClient = orderRequestServiceClient;
+        this.processRepository = processRepository;
+        this.processMapper = processMapper;
     }
-    public ProcessInstance startProcess(String orderType, String channel, Map<String, Object> variables) {
+        public ProcessInstance startProcess(String orderType, String channel, Map<String, Object> variables) {
         try {
+            Map<String, Object> processVariables = new HashMap<>(variables);
+            processVariables.put("orderType", orderType);
+            processVariables.put("channel", channel);
 
-            String token = obtainAccessToken();
-
-            String processKey = determineProcessKey(orderType, channel);
+            String processKey;
+            if(processVariables.get("processInstanceId") == null) {
+                processKey = determineProcessKey(orderType,true);
+            } else {
+                processKey = determineProcessKey(orderType,false);
+            }
             if (processKey == null) {
                 throw new StartProcessException("Belirtilen orderType ve channel için uygun process bulunamadı: " + orderType + ", " + channel);
             }
 
-            Map<String, Object> processVariables = new HashMap<>(variables);
-            processVariables.put("orderType", orderType);
-            processVariables.put("channel", channel);
+
 
             String businessKey = generateBusinessKey(orderType, channel);
             ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
@@ -56,13 +77,13 @@ public class ProcessService {
                     processVariables
             );
 
-            log.info("Process başlatıldı. ProcessInstanceId: {}, BusinessKey: {}, OrderType: {}, Channel: {}",
+            log.info("ProcessEntity başlatıldı. ProcessInstanceId: {}, BusinessKey: {}, OrderType: {}, Channel: {}",
                     processInstance.getId(), businessKey, orderType, channel);
 
             return processInstance;
         } catch (Exception e) {
-            log.error("Process başlatılırken hata oluştu. OrderType: {}, Channel: {}", orderType, channel, e);
-            throw new StartProcessException("Process başlatılırken hata oluştu: " + e.getMessage(), e);
+            log.error("ProcessEntity başlatılırken hata oluştu. OrderType: {}, Channel: {}", orderType, channel, e);
+            throw new StartProcessException("ProcessEntity başlatılırken hata oluştu: " + e.getMessage(), e);
         }
     }
     private String obtainAccessToken() {
@@ -77,20 +98,20 @@ public class ProcessService {
             throw new GeneralException("Yeni access token alınamadı.", e);
         }
     }
-    private String determineProcessKey(String orderType, String channel) {
-        Map<String, String> channelMap = processMapping.getMapping().get(orderType.toUpperCase());
-        if (channelMap == null) {
-            log.warn("Konfigürasyonda orderType '{}' için mapping bulunamadı.", orderType);
+    private String determineProcessKey(String orderType, boolean isStarter) {
+        List<ProcessDto> processes = this.getProcessListByOrderType(orderType);
+        if (processes == null) {
+            log.warn("orderType '{}' ile ilgili process bulunamadı.", orderType);
             return null;
         }
+        ProcessDto processFiltered = processes.stream()
+                .filter(process -> process.isStarter() == isStarter && process.getOrderType().equals(orderType))
+                .findFirst()
+                .orElseThrow(() -> new GeneralException("Belirtilen orderType ve channel için uygun process bulunamadı: " + orderType));
 
-        String processKey = channelMap.get(channel.toUpperCase());
-        if (processKey == null) {
-            log.warn("Konfigürasyonda orderType '{}' ve channel '{}' için mapping bulunamadı.", orderType, channel);
-        }
-
-        return processKey;
+        return processFiltered.getProcessKey();
     }
+
     //gpt verdi. ne ise yaradıgını sonra arastir
     private String generateBusinessKey(String orderType, String channel) {
         return String.format("%s-%s-%d",
@@ -153,7 +174,7 @@ public class ProcessService {
         else if(businessKey != null)
             return sendMessageByBusinessKey(businessKey, messageName, variables);
         else
-            throw new GeneralException("Process instance veya business key eksik");
+            throw new GeneralException("ProcessEntity instance veya business key eksik");
     }
     private MessageResponse sendMessageToProcessByInstanceKey(String processInstanceId, String messageName, Map<String, Object> variables) {
         try {
@@ -239,4 +260,57 @@ public class ProcessService {
         }
     }
 
+    public ProcessInstance launchProcess(OrderRequest orderRequest) {
+        OrderRequestDto orderRequestDto = Objects.requireNonNull(this.orderRequestServiceClient.getOrderRequest(
+                UUID.fromString(orderRequest.getOrderRequestId())).getBody()).getData();
+        log.info("OrderRequestDto: {}", orderRequestDto.getCode());
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("orderRequestId", orderRequest.getOrderRequestId());
+        vars.put("channel", orderRequestDto.getChannel());
+        vars.put("orderType", orderRequestDto.getBaseOrder().getOrderType());
+        vars.put("createdBy", orderRequestDto.getBaseOrder().getCreatedBy());
+        vars.put("processInstanceId", orderRequestDto.getBaseOrder().getBpmnFlowRef().getProcessInstanceId());
+        ProcessInstance processInstance = this.startProcess(
+                orderRequestDto.getBaseOrder().getOrderType(), orderRequestDto.getChannel(), vars);
+        log.info("ProcessEntity instance: {}", processInstance);
+        return processInstance;
+    }
+
+    public List<ProcessDto> getProcessList() {
+        List<ProcessEntity> processes = this.processRepository.findAll();
+        List<ProcessDto> processDtos = processes.stream().map(this.processMapper::entityToDto).toList();
+        log.info("ProcessEntity listesi alındı. ProcessEntity sayısı: {}", processDtos.size());
+        return processDtos;
+    }
+
+    public ProcessDto getProcess(UUID processId) {
+        ProcessEntity process = this.processRepository.findById(processId).orElseThrow(
+                () -> new GeneralException("ProcessEntity bulunamadı: " + processId));
+        log.info("ProcessEntity alındı. ProcessId: {}", processId);
+        return this.processMapper.entityToDto(process);
+    }
+    public void deleteProcess(UUID processId) {
+        ProcessEntity process = this.processRepository.findById(processId).orElseThrow(
+                () -> new GeneralException("ProcessEntity bulunamadı: " + processId));
+        this.processRepository.delete(process);
+        log.info("ProcessEntity silindi. ProcessId: {}", processId);
+    }
+    public ProcessDto getProcess(String processKey) {
+        ProcessEntity process = this.processRepository.findByProcessKey(processKey).orElseThrow(
+                () -> new GeneralException("ProcessEntity bulunamadı: " + processKey));
+        log.info("ProcessEntity alındı. ProcessKey: {}", processKey);
+        return this.processMapper.entityToDto(process);
+    }
+    public ProcessDto createProcess(ProcessDto processDto) {
+        ProcessEntity process = this.processRepository.save(this.processMapper.dtoToEntity(processDto));
+        process.setId(UUID.randomUUID());
+        log.info("ProcessEntity oluşturuldu. ProcessId: {}", process.getId());
+        return this.processMapper.entityToDto(process);
+    }
+    public List<ProcessDto> getProcessListByOrderType(String orderType) {
+        List<ProcessEntity> processes = this.processRepository.findByOrderType(orderType);
+        List<ProcessDto> processDtos = processes.stream().map(this.processMapper::entityToDto).toList();
+        log.info("ProcessEntity listesi alındı. ProcessEntity sayısı: {}", processDtos.size());
+        return processDtos;
+    }
 }

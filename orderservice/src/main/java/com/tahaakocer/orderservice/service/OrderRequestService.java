@@ -18,6 +18,8 @@ import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.OrderRequestMapper;
 import com.tahaakocer.orderservice.model.mongo.*;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
+import com.tahaakocer.orderservice.repository.mongo.ProductRepository;
+import com.tahaakocer.orderservice.service.impl.ProductCatalogServiceImpl;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import com.tahaakocer.orderservice.utils.Util;
 import lombok.extern.slf4j.Slf4j;
@@ -42,22 +44,25 @@ public class OrderRequestService {
     private final OrderRequestMapper orderRequestMapper;
     private final List<OrderUpdateStrategy> updateStrategies;
     private final ProcessServiceClient processServiceClient;
+    private final ProductRepository productRepository;
 
-    private final ProductCatalogService productCatalogService;
+    private final ProductCatalogServiceImpl productCatalogServiceImpl;
     public OrderRequestService(OrderRequestRepository orderRequestRepository,
                                OrderFactoryRegistry orderFactoryRegistry,
                                MongoTemplate mongoTemplate,
                                OrderRequestMapper orderRequestMapper,
                                List<OrderUpdateStrategy> updateStrategies,
                                ProcessServiceClient processServiceClient,
-                               ProductCatalogService productCatalogService) {
+                               ProductRepository productRepository,
+                               ProductCatalogServiceImpl productCatalogServiceImpl) {
         this.orderRequestRepository = orderRequestRepository;
         this.orderFactoryRegistry = orderFactoryRegistry;
         this.mongoTemplate = mongoTemplate;
         this.orderRequestMapper = orderRequestMapper;
         this.updateStrategies = updateStrategies;
         this.processServiceClient = processServiceClient;
-        this.productCatalogService = productCatalogService;
+        this.productRepository = productRepository;
+        this.productCatalogServiceImpl = productCatalogServiceImpl;
     }
 
     public OrderRequestResponse createOrderRequest(InitializerDto initializerDto, String orderType, String channel) {
@@ -196,7 +201,7 @@ public class OrderRequestService {
     }
 
     private OrderRequestDto addProducts(UUID orderRequestId, String productCatalogCode) {
-        ProductCatalogDto productCatalogDto = this.productCatalogService.getProductCatalogByCode(productCatalogCode);
+        ProductCatalogDto productCatalogDto = this.productCatalogServiceImpl.getProductCatalogByCode(productCatalogCode);
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
         try {
@@ -204,6 +209,7 @@ public class OrderRequestService {
             List<Product> products = productorder.getProducts();
             if(products == null) products = new ArrayList<>();
             Product product = new Product();
+            product.setId(UUID.randomUUID());
             product.setName(productCatalogDto.getName());
             List<CharacteristicDto> characteristicDtos = productCatalogDto .getSpecifications()
                     .stream().map(SpecificationDto::getCharacteristics).flatMap(List::stream).toList();
@@ -229,9 +235,21 @@ public class OrderRequestService {
             product.setCreatedBy(KeycloakUtil.getKeycloakUsername());
             product.setUpdateDate(LocalDateTime.now());
             product.setLastModifiedBy(KeycloakUtil.getKeycloakUsername());
+            OrderRequestRef orderRequestRef = OrderRequestRef.builder()
+                    .id(UUID.randomUUID())
+                    .orderRequestId(orderRequest.getId())
+                    .code(orderRequest.getCode())
+                    .orderDate(orderRequest.getCreateDate())
+                    .orderType(orderRequest.getBaseOrder().getOrderType())
+                    .bpmnFlowRef(orderRequest.getBaseOrder().getBpmnFlowRef())
+                    .channel(orderRequest.getChannel())
+                    .isDraft(orderRequest.getBaseOrder().getIsDraft())
+                    .build();
+            product.setOrderRequestRef(orderRequestRef);
             products.add(product);
             ((ProductOrder) orderRequest.getBaseOrder()).setProducts(products);
             orderRequestRepository.save(orderRequest);
+            this.productRepository.save(product);
             log.info("Updated order request: {}", orderRequest);
         } catch (Exception e) {
             throw new GeneralException(e.getMessage());
@@ -243,10 +261,12 @@ public class OrderRequestService {
     private OrderRequestDto deleteProduct(UUID orderRequestId, String productCatalogCode) {
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
+        Product productEntity = this.productRepository.findByMainProductCode(productCatalogCode).orElseThrow(() -> new NotFoundException("Product not found with code: " + productCatalogCode));
         try {
             if(orderRequest.getBaseOrder() instanceof ProductOrder productOrder) {
                 productOrder.getProducts().removeIf(product -> product.getMainProductCode().equals(productCatalogCode));
                 orderRequestRepository.save(orderRequest);
+                this.productRepository.deleteById(productEntity.getId());
                 log.info("Updated order request: {}", orderRequest);
                 return this.orderRequestMapper.entityToDto(orderRequest);
             }
