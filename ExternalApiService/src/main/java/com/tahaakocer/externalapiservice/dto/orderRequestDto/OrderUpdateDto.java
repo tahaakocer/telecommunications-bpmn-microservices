@@ -28,7 +28,7 @@ public class OrderUpdateDto {
     private ProductDto sourceProduct;
     private ProductDto targetProduct;
     private String reCommitment;
-    private ActiveStatusDefinedByDto activeStatusDefinedBy;
+    private OrderStatusDto activeStatusDefinedBy;
 
     private Boolean removeUnlistedCharacteristics = false;
 

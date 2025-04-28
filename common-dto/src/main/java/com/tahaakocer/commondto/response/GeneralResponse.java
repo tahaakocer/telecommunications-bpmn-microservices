@@ -1,20 +1,20 @@
-package com.tahaakocer.externalapiservice.dto.orderRequestDto;
+package com.tahaakocer.commondto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrderRequestDto {
-    private String code;
-    private String channel;
-    private BaseOrderDto baseOrder;
-    private OrderStatusDto activeStatusDefinedBy;
-
+public class GeneralResponse<T> {
+    private int code;
+    private String message;
+    private T data;
 }

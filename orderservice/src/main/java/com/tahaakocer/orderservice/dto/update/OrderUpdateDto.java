@@ -3,6 +3,7 @@ package com.tahaakocer.orderservice.dto.update;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tahaakocer.orderservice.dto.*;
+import com.tahaakocer.orderservice.model.mongo.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class OrderUpdateDto {
     private ProductDto sourceProduct;
     private ProductDto targetProduct;
     private String reCommitment;
-    private ActiveStatusDefinedByDto activeStatusDefinedBy;
+    private OrderStatusDto activeStatusDefinedBy;
 
     private Boolean removeUnlistedCharacteristics = false;
     private Boolean removeUnlistedAccountRefs = false;

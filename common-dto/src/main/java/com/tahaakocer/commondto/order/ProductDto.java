@@ -1,7 +1,6 @@
-package com.tahaakocer.orderservice.dto.order;
+package com.tahaakocer.commondto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tahaakocer.orderservice.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,15 +17,15 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
 
-public class BaseOrderDto extends BaseDto{
-
+public class ProductDto extends BaseDto {
     private String code;
-    private EngagedPartyDto engagedParty;
-    private List<AccountRefDto> accountRefs;
-    private BpmnFlowRefDto bpmnFlowRef;
-    private List<OrderItemDto> orderItems;
+    private String mainProductCode;
+    private String name;
     private List<CharacteristicDto> characteristics;
-    private String orderType;
-    private Boolean isDraft;
+    private UUID productCatalogId;
+    private String productType;
+    private String productConfType;
+    private OrderRequestRefDto orderRequestRef;
+
 
 }

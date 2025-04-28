@@ -1,8 +1,6 @@
-package com.tahaakocer.orderservice.dto.order;
+package com.tahaakocer.commondto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tahaakocer.orderservice.dto.BaseDto;
-import com.tahaakocer.orderservice.dto.OrderStatusDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

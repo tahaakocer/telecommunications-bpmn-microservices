@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.query.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -24,7 +25,7 @@ public class OrderRequest extends BaseModel {
     @Field("baseOrder")
     private BaseOrder baseOrder;
     @Field("activeStatusDefinedBy")
-    private ActiveStatusDefinedBy activeStatusDefinedBy;
+    private OrderStatus activeStatusDefinedBy;
     @PrePersist
     public void prePersist() {
         this.code = Util.generateRandomCode("ORDRQ");

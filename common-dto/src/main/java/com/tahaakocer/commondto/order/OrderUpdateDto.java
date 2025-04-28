@@ -1,11 +1,11 @@
-package com.tahaakocer.camunda.dto.orderRequestDto;
+package com.tahaakocer.commondto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@SuperBuilder
 public class OrderUpdateDto {
     private EngagedPartyDto engagedParty;
     private List<AccountRefDto> accountRefs;
@@ -21,8 +22,7 @@ public class OrderUpdateDto {
     private List<OrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
     private Boolean isDraft;
-
-
+    private AddressDto address;
 
     private List<ProductDto> products;
     private ProductDto sourceProduct;
@@ -31,11 +31,8 @@ public class OrderUpdateDto {
     private OrderStatusDto activeStatusDefinedBy;
 
     private Boolean removeUnlistedCharacteristics = false;
-
     private Boolean removeUnlistedAccountRefs = false;
-
     private Boolean removeUnlistedOrderItems = false;
-
     private Boolean removeUnlistedProducts = false;
 
     public boolean isRemoveUnlistedCharacteristics() {

@@ -2,8 +2,8 @@ package com.tahaakocer.camunda.listener;
 
 import com.tahaakocer.camunda.client.OrderRequestServiceClient;
 import com.tahaakocer.camunda.dto.GeneralResponse;
-import com.tahaakocer.camunda.dto.orderRequestDto.ActiveStatusDefinedByDto;
 import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestResponse;
+import com.tahaakocer.camunda.dto.orderRequestDto.OrderStatusDto;
 import com.tahaakocer.camunda.dto.orderRequestDto.OrderUpdateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.DelegateTask;
@@ -43,7 +43,7 @@ public class GlobalUserTaskExecutionListener implements TaskListener {
         // orderRequestId değişkenini process instance'dan çekelim
         String orderRequestId = (String) delegateTask.getVariable("orderRequestId");
 
-        ActiveStatusDefinedByDto activeStatus = new ActiveStatusDefinedByDto();
+        OrderStatusDto activeStatus = new OrderStatusDto();
         activeStatus.setId(UUID.randomUUID());
         activeStatus.setState(taskId);
         activeStatus.setSubState("Created");

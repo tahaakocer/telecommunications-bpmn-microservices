@@ -24,7 +24,7 @@ public class BaseOrderItem extends BaseModel {
 
     private BpmnFlowRef bpmnFlowRef;
 
-    private ActiveStatusDefinedBy activeStatusDefinedBy;
+    private OrderStatus activeStatusDefinedBy;
 
     private List<Characteristic> characteristics;
 

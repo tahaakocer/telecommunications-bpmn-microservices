@@ -37,9 +37,6 @@ public class BaseOrder extends BaseModel {
     @Field("bpmnFlowRef")
     private BpmnFlowRef bpmnFlowRef;
 
-    @Field("baseOrderItems")
-    private List<BaseOrderItem> baseOrderItems = new ArrayList<>();
-
     @Field("characteristics")
     private List<Characteristic> characteristics = new ArrayList<>();
 
