@@ -31,7 +31,7 @@ public class Address extends BaseModel {
     private String villageName;
     private String neighborhoodName;
     private String streetName;
-    private String outsideDoorCode;
+    private Integer outsideDoorCode;
     private String blokName;
     private String siteName;
     private Integer interiorDoorNo;

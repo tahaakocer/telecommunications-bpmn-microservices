@@ -1,5 +1,6 @@
 package com.tahaakocer.camunda.listener;
 
+import com.tahaakocer.camunda.client.OrderRequestServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.TaskListener;
 import org.camunda.bpm.engine.impl.bpmn.behavior.UserTaskActivityBehavior;
@@ -19,6 +20,11 @@ import java.util.List;
 @Component
 @Slf4j
 public class GlobalTaskParseListener implements BpmnParseListener {
+    private final OrderRequestServiceClient orderRequestServiceClient;
+
+    public GlobalTaskParseListener(OrderRequestServiceClient orderRequestServiceClient) {
+        this.orderRequestServiceClient = orderRequestServiceClient;
+    }
 
     @Override
     public void parseUserTask(Element userTaskElement, ScopeImpl scope, ActivityImpl activity) {
@@ -28,7 +34,7 @@ public class GlobalTaskParseListener implements BpmnParseListener {
             TaskDefinition taskDefinition = activityBehavior.getTaskDefinition();
             if (taskDefinition != null) {
                 // Task olaylarına listener ekle
-                taskDefinition.addTaskListener(TaskListener.EVENTNAME_CREATE, new GlobalUserTaskExecutionListener());
+                taskDefinition.addTaskListener(TaskListener.EVENTNAME_CREATE, new GlobalUserTaskExecutionListener(orderRequestServiceClient));
 //                taskDefinition.addTaskListener(TaskListener.EVENTNAME_ASSIGNMENT, new GlobalUserTaskExecutionListener());
 //                taskDefinition.addTaskListener(TaskListener.EVENTNAME_COMPLETE, new GlobalUserTaskExecutionListener());
 //                taskDefinition.addTaskListener(TaskListener.EVENTNAME_DELETE, new GlobalUserTaskExecutionListener());
@@ -42,7 +48,7 @@ public class GlobalTaskParseListener implements BpmnParseListener {
     public void parseServiceTask(Element serviceTaskElement, ScopeImpl scope, ActivityImpl activity) {
         // Service Task için execution listener ekle
         activity.addListener(org.camunda.bpm.engine.delegate.ExecutionListener.EVENTNAME_START,
-                new GlobalServiceTaskExecutionListener());
+                new GlobalServiceTaskExecutionListener(orderRequestServiceClient));
 //        activity.addExecutionListener(org.camunda.bpm.engine.delegate.ExecutionListener.EVENTNAME_END,
 //                new GlobalServiceTaskExecutionListener());
 

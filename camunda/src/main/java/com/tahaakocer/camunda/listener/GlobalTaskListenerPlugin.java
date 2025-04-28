@@ -1,5 +1,6 @@
 package com.tahaakocer.camunda.listener;
 
+import com.tahaakocer.camunda.client.OrderRequestServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.impl.bpmn.parser.BpmnParseListener;
 import org.camunda.bpm.engine.impl.cfg.AbstractProcessEnginePlugin;
@@ -12,6 +13,11 @@ import java.util.List;
 @Component
 @Slf4j
 public class GlobalTaskListenerPlugin extends AbstractProcessEnginePlugin {
+    private final OrderRequestServiceClient orderRequestServiceClient;
+
+    public GlobalTaskListenerPlugin(OrderRequestServiceClient orderRequestServiceClient) {
+        this.orderRequestServiceClient = orderRequestServiceClient;
+    }
 
     @Override
     public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
@@ -21,6 +27,6 @@ public class GlobalTaskListenerPlugin extends AbstractProcessEnginePlugin {
             processEngineConfiguration.setCustomPostBPMNParseListeners(parseListeners);
         }
 
-        parseListeners.add(new GlobalTaskParseListener());
+        parseListeners.add(new GlobalTaskParseListener(orderRequestServiceClient));
     }
 }
