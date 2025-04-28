@@ -1,12 +1,10 @@
 package com.tahaakocer.orderservice.model.mongo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.tahaakocer.orderservice.utils.Util;
 import jakarta.persistence.PrePersist;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -39,8 +37,8 @@ public class BaseOrder extends BaseModel {
     @Field("bpmnFlowRef")
     private BpmnFlowRef bpmnFlowRef;
 
-    @Field("orderItems")
-    private List<OrderItem> orderItems = new ArrayList<>();
+    @Field("baseOrderItems")
+    private List<BaseOrderItem> baseOrderItems = new ArrayList<>();
 
     @Field("characteristics")
     private List<Characteristic> characteristics = new ArrayList<>();
