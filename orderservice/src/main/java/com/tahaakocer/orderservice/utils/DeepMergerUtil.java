@@ -1,8 +1,8 @@
 package com.tahaakocer.orderservice.utils;
 
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
-import com.tahaakocer.orderservice.dto.ProductCatalogDto;
-import com.tahaakocer.orderservice.dto.SpecificationDto;
+import com.tahaakocer.commondto.order.CharacteristicDto;
+import com.tahaakocer.commondto.order.ProductCatalogDto;
+import com.tahaakocer.commondto.order.SpecificationDto;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

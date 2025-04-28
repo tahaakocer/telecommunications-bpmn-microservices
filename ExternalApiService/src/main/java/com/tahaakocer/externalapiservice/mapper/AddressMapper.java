@@ -1,8 +1,8 @@
 package com.tahaakocer.externalapiservice.mapper;
 
+import com.tahaakocer.commondto.order.AddressDto;
 import com.tahaakocer.externalapiservice.dto.bbk.FullAddressResponse;
 import com.tahaakocer.externalapiservice.dto.bbk.TTAddressDto;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.AddressDto;
 import org.mapstruct.*;
 
 import java.lang.reflect.Field;

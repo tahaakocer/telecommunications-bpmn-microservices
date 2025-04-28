@@ -1,6 +1,8 @@
 package com.tahaakocer.orderservice.mapper;
 
-import com.tahaakocer.orderservice.dto.*;
+import com.tahaakocer.commondto.order.CharacteristicDto;
+import com.tahaakocer.commondto.order.ProductCatalogDto;
+import com.tahaakocer.commondto.order.SpecificationDto;
 import com.tahaakocer.orderservice.dto.request.ProductCatalogRequest;
 import com.tahaakocer.orderservice.model.mongo.ProductCatalog;
 import lombok.experimental.SuperBuilder;

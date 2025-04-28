@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.mapper;
 
-import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
+import com.tahaakocer.commondto.order.BpmnFlowRefDto;
 import com.tahaakocer.orderservice.model.mongo.BpmnFlowRef;
 import lombok.experimental.SuperBuilder;
 import org.mapstruct.BeanMapping;

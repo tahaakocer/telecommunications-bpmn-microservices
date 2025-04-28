@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.service;
 
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
+import com.tahaakocer.commondto.order.CharacteristicDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.CharacteristicMapper;
 import com.tahaakocer.orderservice.model.mongo.Characteristic;
@@ -8,7 +8,6 @@ import com.tahaakocer.orderservice.repository.mongo.CharacteristicRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import com.tahaakocer.orderservice.utils.PUUID;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.representations.AccessToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

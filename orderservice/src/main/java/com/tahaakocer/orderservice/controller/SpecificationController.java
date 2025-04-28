@@ -1,9 +1,8 @@
 package com.tahaakocer.orderservice.controller;
 
-import com.tahaakocer.orderservice.dto.response.GeneralResponse;
+import com.tahaakocer.commondto.order.SpecificationDto;
 import com.tahaakocer.orderservice.dto.request.SpecificationCreateRequest;
-import com.tahaakocer.orderservice.dto.SpecificationDto;
-import com.tahaakocer.orderservice.mapper.SpecificationMapper;
+import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.service.SpecificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

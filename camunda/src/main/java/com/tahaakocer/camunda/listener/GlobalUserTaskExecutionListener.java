@@ -2,9 +2,10 @@ package com.tahaakocer.camunda.listener;
 
 import com.tahaakocer.camunda.client.OrderRequestServiceClient;
 import com.tahaakocer.camunda.dto.GeneralResponse;
-import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestResponse;
-import com.tahaakocer.camunda.dto.orderRequestDto.OrderStatusDto;
-import com.tahaakocer.camunda.dto.orderRequestDto.OrderUpdateDto;
+
+import com.tahaakocer.commondto.order.OrderStatusDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.DelegateTask;
 import org.camunda.bpm.engine.delegate.TaskListener;

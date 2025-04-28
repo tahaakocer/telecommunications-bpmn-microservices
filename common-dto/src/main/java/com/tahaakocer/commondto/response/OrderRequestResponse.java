@@ -1,9 +1,11 @@
-package com.tahaakocer.orderservice.dto.response;
+package com.tahaakocer.commondto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tahaakocer.orderservice.dto.BaseDto;
-import com.tahaakocer.orderservice.dto.order.BaseOrderDto;
-import lombok.*;
+import com.tahaakocer.commondto.order.BaseDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;

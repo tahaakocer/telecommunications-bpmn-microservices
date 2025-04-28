@@ -1,13 +1,13 @@
 package com.tahaakocer.orderservice.controller;
 
-import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
+import com.tahaakocer.commondto.order.BpmnFlowRefDto;
+import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
-import com.tahaakocer.orderservice.dto.order.OrderRequestDto;
-import com.tahaakocer.orderservice.dto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.dto.update.FieldUpdateRequest;
 import com.tahaakocer.orderservice.dto.update.MultiFieldUpdateRequest;
-import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
 import com.tahaakocer.orderservice.mapper.OrderRequestMapper;
 import com.tahaakocer.orderservice.service.OrderRequestService;
 import jakarta.validation.constraints.NotBlank;

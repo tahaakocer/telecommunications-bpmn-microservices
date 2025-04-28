@@ -1,10 +1,8 @@
 package com.tahaakocer.orderservice.controller;
 
-import com.tahaakocer.orderservice.dto.AccountDto;
+import com.tahaakocer.commondto.order.AccountDto;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.service.AccountService;
-import lombok.Getter;
-import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,7 @@
 package com.tahaakocer.orderservice.initializer.impl;
 
-import com.tahaakocer.orderservice.dto.AccountRefDto;
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
-import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
+import com.tahaakocer.commondto.order.AccountRefDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.AccountRefMapper;

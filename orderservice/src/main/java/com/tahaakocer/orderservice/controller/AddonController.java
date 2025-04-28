@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.controller;
 
-import com.tahaakocer.orderservice.dto.AddonDto;
+import com.tahaakocer.commondto.order.AddonDto;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.service.impl.AddonServiceImpl;
 import org.springframework.http.ResponseEntity;

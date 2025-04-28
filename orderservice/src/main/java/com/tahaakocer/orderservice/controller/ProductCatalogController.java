@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.controller;
 
+import com.tahaakocer.commondto.order.ProductCatalogDto;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
-import com.tahaakocer.orderservice.dto.ProductCatalogDto;
 import com.tahaakocer.orderservice.dto.request.ProductCatalogRequest;
 import com.tahaakocer.orderservice.mapper.ProductCatalogMapper;
 import com.tahaakocer.orderservice.service.impl.ProductCatalogServiceImpl;

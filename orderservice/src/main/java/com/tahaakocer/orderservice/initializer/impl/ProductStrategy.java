@@ -1,20 +1,18 @@
 package com.tahaakocer.orderservice.initializer.impl;
 
-import com.tahaakocer.orderservice.dto.OrderRequestRefDto;
-import com.tahaakocer.orderservice.dto.ProductDto;
-import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.order.ProductDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.ProductMapper;
+import com.tahaakocer.orderservice.model.mongo.OrderRequest;
 import com.tahaakocer.orderservice.model.mongo.OrderRequestRef;
 import com.tahaakocer.orderservice.model.mongo.Product;
-import com.tahaakocer.orderservice.model.mongo.OrderRequest;
 import com.tahaakocer.orderservice.model.mongo.ProductOrder;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
 import com.tahaakocer.orderservice.repository.mongo.ProductRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

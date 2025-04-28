@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.controller;
 
+import com.tahaakocer.commondto.order.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.request.CharacteristicCreateRequest;
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.response.CharacteristicGetAllResponse;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.mapper.CharacteristicMapper;

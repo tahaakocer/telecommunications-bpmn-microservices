@@ -1,9 +1,9 @@
 package com.tahaakocer.orderservice.service.impl;
 
+import com.tahaakocer.commondto.order.AddonDto;
+import com.tahaakocer.commondto.order.ProductCatalogDto;
+import com.tahaakocer.commondto.order.SpecificationDto;
 import com.tahaakocer.orderservice.client.InfrastructureServiceClient;
-import com.tahaakocer.orderservice.dto.AddonDto;
-import com.tahaakocer.orderservice.dto.ProductCatalogDto;
-import com.tahaakocer.orderservice.dto.SpecificationDto;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
 import com.tahaakocer.orderservice.dto.response.MaxSpeedResponse;
 import com.tahaakocer.orderservice.exception.GeneralException;
@@ -22,7 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 

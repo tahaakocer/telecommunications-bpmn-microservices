@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.service;
 
-import com.tahaakocer.orderservice.dto.AddonDto;
+import com.tahaakocer.commondto.order.AddonDto;
 
 import java.util.List;
 import java.util.UUID;

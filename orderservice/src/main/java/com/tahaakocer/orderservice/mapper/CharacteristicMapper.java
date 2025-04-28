@@ -1,12 +1,14 @@
 package com.tahaakocer.orderservice.mapper;
 
+import com.tahaakocer.commondto.order.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.request.CharacteristicCreateRequest;
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.response.CharacteristicGetAllResponse;
-import com.tahaakocer.orderservice.model.mongo.BaseModel;
 import com.tahaakocer.orderservice.model.mongo.Characteristic;
 import lombok.experimental.SuperBuilder;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 

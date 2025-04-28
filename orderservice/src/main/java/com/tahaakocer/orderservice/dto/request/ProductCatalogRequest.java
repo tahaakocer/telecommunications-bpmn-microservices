@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.dto.request;
 
-import com.tahaakocer.orderservice.dto.SpecificationDto;
+import com.tahaakocer.commondto.order.SpecificationDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

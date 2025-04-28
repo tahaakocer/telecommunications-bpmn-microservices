@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.dto.response;
 
-import com.tahaakocer.orderservice.dto.BaseDto;
+import com.tahaakocer.commondto.order.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-
 public class CharacteristicGetAllResponse extends BaseDto {
     private String code;
     private String name;

@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.initializer.impl;
 
-import com.tahaakocer.orderservice.dto.AddressDto;
-import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
+import com.tahaakocer.commondto.order.AddressDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.AddressMapper;

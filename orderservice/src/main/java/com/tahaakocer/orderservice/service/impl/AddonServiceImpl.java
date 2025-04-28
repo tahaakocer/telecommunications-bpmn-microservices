@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.service.impl;
 
-import com.tahaakocer.orderservice.dto.AddonDto;
-import com.tahaakocer.orderservice.dto.ProductCatalogDto;
+import com.tahaakocer.commondto.order.AddonDto;
+import com.tahaakocer.commondto.order.ProductCatalogDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.AddonMapper;
 import com.tahaakocer.orderservice.model.mongo.Addon;

@@ -1,8 +1,8 @@
 package com.tahaakocer.orderservice.service;
 
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
+import com.tahaakocer.commondto.order.CharacteristicDto;
+import com.tahaakocer.commondto.order.SpecificationDto;
 import com.tahaakocer.orderservice.dto.request.SpecificationCreateRequest;
-import com.tahaakocer.orderservice.dto.SpecificationDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.SpecificationMapper;
 import com.tahaakocer.orderservice.model.mongo.Specification;

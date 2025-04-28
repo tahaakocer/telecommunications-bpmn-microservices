@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.initializer.impl;
 
-import com.tahaakocer.orderservice.dto.EngagedPartyDto;
-import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
+import com.tahaakocer.commondto.order.EngagedPartyDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.EngagedPartyMapper;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Slf4j
 @Component

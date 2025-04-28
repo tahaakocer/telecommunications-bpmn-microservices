@@ -1,8 +1,8 @@
 package com.tahaakocer.externalapiservice.controller;
 
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
 import com.tahaakocer.externalapiservice.dto.OrderRequest;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.OrderRequestResponse;
 import com.tahaakocer.externalapiservice.service.BbkService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;

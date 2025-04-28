@@ -1,10 +1,11 @@
 package com.tahaakocer.externalapiservice.client;
 
+import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.externalapiservice.config.FeignClientConfig;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.OrderRequestDto;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.OrderRequestResponse;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.OrderUpdateDto;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

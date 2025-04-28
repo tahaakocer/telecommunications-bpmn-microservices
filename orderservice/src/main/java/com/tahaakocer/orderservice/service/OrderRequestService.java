@@ -1,16 +1,14 @@
 package com.tahaakocer.orderservice.service;
 
+import com.tahaakocer.commondto.order.CharacteristicDto;
+import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.ProductCatalogDto;
+import com.tahaakocer.commondto.order.SpecificationDto;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.client.ProcessServiceClient;
-import com.tahaakocer.orderservice.dto.BpmnFlowRefDto;
-import com.tahaakocer.orderservice.dto.CharacteristicDto;
-import com.tahaakocer.orderservice.dto.ProductCatalogDto;
-import com.tahaakocer.orderservice.dto.SpecificationDto;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
-import com.tahaakocer.orderservice.dto.order.OrderRequestDto;
 import com.tahaakocer.orderservice.dto.process.StartProcessResponse;
-import com.tahaakocer.orderservice.dto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.dto.response.GeneralResponse;
-import com.tahaakocer.orderservice.dto.update.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.exception.NotFoundException;
 import com.tahaakocer.orderservice.initializer.OrderFactoryRegistry;
@@ -278,7 +276,7 @@ public class OrderRequestService {
         return this.orderRequestMapper.entityToDto(orderRequest);
     }
 
-    public OrderRequestResponse updateOrderRequest(UUID orderRequestId, OrderUpdateDto orderUpdateDto) {
+    public OrderRequestResponse updateOrderRequest(UUID orderRequestId, com.tahaakocer.commondto.order.OrderUpdateDto orderUpdateDto) {
         OrderRequest orderRequest = this.orderRequestRepository.findById(orderRequestId).orElseThrow(
                 () -> new GeneralException("Order request not found with ID: " + orderRequestId)
         );
@@ -299,7 +297,7 @@ public class OrderRequestService {
          return this.orderRequestMapper.entityToResponse(orderRequest);
     }
 
-    public OrderRequestResponse updateOrderStatus(UUID orderRequestId, BpmnFlowRefDto bpmnFlowRefDto) {
+    public OrderRequestResponse updateOrderStatus(UUID orderRequestId, com.tahaakocer.commondto.order.BpmnFlowRefDto bpmnFlowRefDto) {
         OrderRequest orderRequest = orderRequestRepository.findById(orderRequestId)
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId)
                 );

@@ -1,10 +1,11 @@
 package com.tahaakocer.camunda.client;
 
 import com.tahaakocer.camunda.dto.GeneralResponse;
-import com.tahaakocer.camunda.dto.orderRequestDto.BpmnFlowRefDto;
-import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestDto;
-import com.tahaakocer.camunda.dto.orderRequestDto.OrderRequestResponse;
-import com.tahaakocer.camunda.dto.orderRequestDto.OrderUpdateDto;
+
+import com.tahaakocer.commondto.order.BpmnFlowRefDto;
+import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

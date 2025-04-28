@@ -1,10 +1,10 @@
 package com.tahaakocer.externalapiservice.service;
 
+import com.tahaakocer.commondto.order.EngagedPartyDto;
+import com.tahaakocer.commondto.order.OrderRequestDto;
 import com.tahaakocer.externalapiservice.client.OrderRequestServiceClient;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
 import com.tahaakocer.externalapiservice.dto.mernis.ValidMernisResponse;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.EngagedPartyDto;
-import com.tahaakocer.externalapiservice.dto.orderRequestDto.OrderRequestDto;
 import com.tahaakocer.externalapiservice.exception.GeneralException;
 import com.tahaakocer.externalapiservice.soap.NSNKPSPublicSoap;
 import lombok.extern.slf4j.Slf4j;

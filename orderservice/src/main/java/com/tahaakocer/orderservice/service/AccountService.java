@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.service;
 
-import com.tahaakocer.orderservice.dto.AccountDto;
+import com.tahaakocer.commondto.order.AccountDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.AccountMapper;
 import com.tahaakocer.orderservice.model.mongo.Account;
