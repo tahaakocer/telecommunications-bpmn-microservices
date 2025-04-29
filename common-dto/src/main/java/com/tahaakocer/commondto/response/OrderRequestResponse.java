@@ -24,5 +24,4 @@ public class OrderRequestResponse extends BaseDto {
     private String processInstanceId;
     private String processDefinitionId;
     private String processBusinessKey;
-
 }

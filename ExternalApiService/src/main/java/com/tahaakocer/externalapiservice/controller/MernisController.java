@@ -1,7 +1,7 @@
 package com.tahaakocer.externalapiservice.controller;
 
+import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
-import com.tahaakocer.externalapiservice.dto.OrderRequest;
 import com.tahaakocer.externalapiservice.dto.mernis.ValidMernisResponse;
 import com.tahaakocer.externalapiservice.service.MernisService;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class MernisController {
     }
 
     @PostMapping("/valid")
-    public ResponseEntity<GeneralResponse<ValidMernisResponse>> mernis(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<GeneralResponse<ValidMernisResponse>> mernis(@RequestBody GeneralOrderRequest orderRequest) {
         UUID orderRequestId = UUID.fromString(orderRequest.getOrderRequestId());
         return ResponseEntity.ok(GeneralResponse.<ValidMernisResponse>builder()
                         .code(200)

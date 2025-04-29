@@ -19,7 +19,7 @@ public class OrderUpdateDto {
     private EngagedPartyDto engagedParty;
     private List<AccountRefDto> accountRefs;
     private BpmnFlowRefDto bpmnFlowRef;
-    private List<OrderItemDto> orderItems;
+    private List<BaseOrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
     private Boolean isDraft;
     private AddressDto address;

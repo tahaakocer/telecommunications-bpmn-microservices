@@ -1,8 +1,8 @@
 package com.tahaakocer.externalapiservice.controller;
 
+import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
-import com.tahaakocer.externalapiservice.dto.OrderRequest;
 import com.tahaakocer.externalapiservice.service.BbkService;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class AddressController {
 
     @PostMapping("/update-address")
     public ResponseEntity<GeneralResponse<OrderRequestResponse>> updateAddress(
-            @RequestBody OrderRequest orderRequest
+            @RequestBody GeneralOrderRequest orderRequest
     ) {
         OrderRequestResponse orderRequestResponse = this.bbkService.updateAddress(UUID.fromString(orderRequest.getOrderRequestId()));
         return ResponseEntity.ok(GeneralResponse.<OrderRequestResponse>builder()

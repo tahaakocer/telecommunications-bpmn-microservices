@@ -1,9 +1,6 @@
 package com.tahaakocer.orderservice.service;
 
-import com.tahaakocer.commondto.order.CharacteristicDto;
-import com.tahaakocer.commondto.order.OrderRequestDto;
-import com.tahaakocer.commondto.order.ProductCatalogDto;
-import com.tahaakocer.commondto.order.SpecificationDto;
+import com.tahaakocer.commondto.order.*;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.orderservice.client.ProcessServiceClient;
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
@@ -13,6 +10,8 @@ import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.exception.NotFoundException;
 import com.tahaakocer.orderservice.initializer.OrderFactoryRegistry;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
+import com.tahaakocer.orderservice.itemizer.OrderItemizer;
+import com.tahaakocer.orderservice.itemizer.OrderItemizerFactory;
 import com.tahaakocer.orderservice.mapper.OrderRequestMapper;
 import com.tahaakocer.orderservice.model.mongo.*;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
@@ -189,6 +188,14 @@ public class OrderRequestService {
                 .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
         return this.orderRequestMapper.entityToDto(orderRequest);
     }
+    public OrderRequest getOrderRequestEntity(UUID orderRequestId) {
+        return orderRequestRepository.findById(orderRequestId)
+                .orElseThrow(() -> new NotFoundException("Order request not found with ID: " + orderRequestId));
+    }
+    public OrderRequestResponse saveOrderRequestEntity (OrderRequest orderRequest) {
+        return this.orderRequestMapper.entityToResponse(orderRequestRepository.save(orderRequest));
+    }
+
 
     public OrderRequestDto updateProduct(UUID orderRequestId, String productCatalogCode, boolean willBeDelete) {
         if (willBeDelete) {
@@ -322,4 +329,5 @@ public class OrderRequestService {
         return this.orderRequestMapper.entityToResponse(orderRequest);
 
     }
+
 }

@@ -44,6 +44,9 @@ public class BaseOrder extends BaseModel {
     private String orderType;
 
 
+    @Field("orderItems")
+    private List<BaseOrderItem> orderItems = new ArrayList<>();
+
     @Field("isDraft")
     private Boolean isDraft;
 

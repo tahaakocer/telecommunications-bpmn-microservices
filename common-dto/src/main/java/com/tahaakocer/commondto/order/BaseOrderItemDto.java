@@ -16,15 +16,24 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
 
-public class BaseOrderDto extends BaseDto{
-
+public class BaseOrderItemDto extends BaseDto {
     private String code;
-    private EngagedPartyDto engagedParty;
-    private List<AccountRefDto> accountRefs;
-    private BpmnFlowRefDto bpmnFlowRef;
-    private List<BaseOrderItemDto> orderItems;
-    private List<CharacteristicDto> characteristics;
-    private String orderType;
-    private Boolean isDraft;
 
+    private String processInstanceId;
+
+    private BpmnFlowRefDto bpmnFlowRef;
+
+    private OrderStatusDto activeStatusDefinedBy;
+
+    private List<CharacteristicDto> characteristics;
+
+    private OrderRequestRefDto orderRequestRef;
+
+    private AccountRefDto accountRef;
+
+    private Boolean flowEnded;
+
+    private ProductDto product;
+
+    private String orderType;
 }

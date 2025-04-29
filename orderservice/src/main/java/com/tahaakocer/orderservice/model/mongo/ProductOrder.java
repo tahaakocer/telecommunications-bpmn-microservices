@@ -15,6 +15,4 @@ public class ProductOrder extends BaseOrder{
     @Field("products")
     private List<Product> products = new ArrayList<>();
 
-    @Field("orderItems")
-    private List<ProductOrderItem> orderItems = new ArrayList<>();
 }

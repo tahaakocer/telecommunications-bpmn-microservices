@@ -2,7 +2,6 @@ package com.tahaakocer.orderservice.model.mongo;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
