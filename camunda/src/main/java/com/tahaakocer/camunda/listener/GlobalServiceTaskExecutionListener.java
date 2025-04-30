@@ -3,8 +3,11 @@ package com.tahaakocer.camunda.listener;
 import com.tahaakocer.camunda.client.OrderRequestServiceClient;
 import com.tahaakocer.camunda.dto.GeneralResponse;
 
+import com.tahaakocer.camunda.exception.GeneralException;
+import com.tahaakocer.commondto.order.OrderItemDto;
 import com.tahaakocer.commondto.order.OrderStatusDto;
 import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -40,9 +43,60 @@ public class GlobalServiceTaskExecutionListener implements ExecutionListener {
                         "\neventName: {}",
                 executionId, processInstanceId, activityId, activityName, eventName);
 
-        // orderRequestId değişkenini process instance'dan çekelim
         String orderRequestId = (String) execution.getVariable("orderRequestId");
+        if (orderRequestId == null) {
+            log.error("GlobalServiceTaskExecutionListener - orderRequestId variable is null");
+            throw new GeneralException("GlobalServiceTaskExecutionListener - orderRequestId variable is null");
+        }
 
+        String orderItemId = (String) execution.getVariable("orderItemId");
+        if (orderItemId == null) {
+            log.error("GlobalServiceTaskExecutionListener - orderItemId variable is null");
+            throw new GeneralException("GlobalServiceTaskExecutionListener - orderItemId variable is null");
+        }
+
+        Object isMainProcessObject = execution.getVariable("isMainProcess");
+        if(isMainProcessObject == null) {
+            log.error("GlobalServiceTaskExecutionListener - isMainProcess variable is null");
+            throw new GeneralException("GlobalServiceTaskExecutionListener - isMainProcess variable is null");
+        }
+
+
+        Boolean isMainProcess = (Boolean) isMainProcessObject;
+        OrderUpdateDto orderUpdateDto = getOrderUpdateDto(activityId, activityName, eventName);
+        if(isMainProcess) {
+            callUpdateOrderRequestMethod(orderRequestId, orderUpdateDto);
+        } else {
+            callUpdateOrderItemMethod(orderItemId, orderUpdateDto);
+        }
+
+    }
+
+    private void callUpdateOrderRequestMethod(String orderRequestId, OrderUpdateDto orderUpdateDto) {
+        try {
+            ResponseEntity<GeneralResponse<OrderRequestResponse>> response =
+                    this.orderRequestServiceClient.updateOrderRequest(UUID.fromString(orderRequestId), orderUpdateDto);
+
+        } catch (Exception e) {
+            log.error("Error while updating ActiveStatusDefinedBy:" + e.getMessage());
+            throw new RuntimeException("Error while updating ActiveStatusDefinedBy: " + e.getMessage());
+        }
+    }
+    private void callUpdateOrderItemMethod(String orderItemId, OrderUpdateDto orderUpdateDto) {
+        try {
+            ResponseEntity<GeneralResponse<OrderItemDto>> response =
+                    this.orderRequestServiceClient.updateOrderItem(GeneralOrderRequest.builder()
+                                    .orderItemId(orderItemId)
+                                    .orderUpdateDto(orderUpdateDto)
+                            .build());
+
+        } catch (Exception e) {
+            log.error("Error while updating ActiveStatusDefinedBy:" + e.getMessage());
+            throw new RuntimeException("Error while updating ActiveStatusDefinedBy: " + e.getMessage());
+        }
+    }
+
+    private OrderUpdateDto getOrderUpdateDto(String activityId, String activityName, String eventName) {
         OrderStatusDto activeStatus = new OrderStatusDto();
         activeStatus.setId(UUID.randomUUID());
         activeStatus.setState(activityId);
@@ -52,14 +106,6 @@ public class GlobalServiceTaskExecutionListener implements ExecutionListener {
         activeStatus.setStartDate(LocalDateTime.now());
         OrderUpdateDto orderUpdateDto = new OrderUpdateDto();
         orderUpdateDto.setActiveStatusDefinedBy(activeStatus);
-
-        try {
-            ResponseEntity<GeneralResponse<OrderRequestResponse>> response =
-                    this.orderRequestServiceClient.updateOrderRequest(UUID.fromString(orderRequestId), orderUpdateDto);
-
-        } catch (Exception e) {
-            log.error("Error while updating ActiveStatusDefinedBy:" + e.getMessage());
-            throw new RuntimeException("Error while updating ActiveStatusDefinedBy: " + e.getMessage());
-        }
+        return orderUpdateDto;
     }
 }

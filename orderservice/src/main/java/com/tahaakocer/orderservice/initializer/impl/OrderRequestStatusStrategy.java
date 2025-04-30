@@ -43,6 +43,8 @@ public class OrderRequestStatusStrategy implements OrderUpdateStrategy {
 
     @Override
     public void update(OrderRequest order, OrderUpdateDto updateDTO) {
+        if(!canHandle(updateDTO)) return;
+
         try {
             OrderStatus currentStatus = order.getActiveStatusDefinedBy();
             this.orderStatusMapper.updateOrderStatusFromDto(currentStatus, updateDTO.getActiveStatusDefinedBy());

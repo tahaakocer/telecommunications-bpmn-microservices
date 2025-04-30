@@ -12,6 +12,6 @@ import java.util.List;
 @SuperBuilder
 @Document("OrderItemStatusHistory")
 public class OrderItemStatus extends OrderStatus {
-    private OrderRequestRef orderRequestRef;
+    private OrderItemRef orderItemRef;
     private List<StatusHistory> orderItemStatusHistory;
 }

@@ -19,7 +19,7 @@ public class OrderUpdateDto {
     private EngagedPartyDto engagedParty;
     private List<AccountRefDto> accountRefs;
     private BpmnFlowRefDto bpmnFlowRef;
-    private List<BaseOrderItemDto> orderItems;
+    private List<OrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
     private Boolean isDraft;
     private AddressDto address;
@@ -30,6 +30,8 @@ public class OrderUpdateDto {
     private String reCommitment;
     private OrderStatusDto activeStatusDefinedBy;
 
+    private String processInstanceId;
+    private OrderRequestRefDto orderRequestRef;
     private Boolean removeUnlistedCharacteristics = false;
     private Boolean removeUnlistedAccountRefs = false;
     private Boolean removeUnlistedOrderItems = false;

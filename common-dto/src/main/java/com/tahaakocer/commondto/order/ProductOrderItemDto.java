@@ -14,6 +14,6 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
 
-public class ProductOrderItemDto extends BaseOrderItemDto {
+public class ProductOrderItemDto extends OrderItemDto {
     private String type;
 }

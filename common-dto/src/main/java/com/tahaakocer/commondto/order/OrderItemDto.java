@@ -1,12 +1,10 @@
 package com.tahaakocer.commondto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
+public class OrderItemDto extends BaseDto {
 
-public class BaseOrderItemDto extends BaseDto {
     private String code;
 
     private String processInstanceId;
@@ -36,4 +34,5 @@ public class BaseOrderItemDto extends BaseDto {
     private ProductDto product;
 
     private String orderType;
+    private String type;
 }

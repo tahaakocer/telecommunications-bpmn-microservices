@@ -2,6 +2,7 @@ package com.tahaakocer.orderservice.model.mongo;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductOrder extends BaseOrder{
-    @Field("products")
+    @DBRef
     private List<Product> products = new ArrayList<>();
 
 }

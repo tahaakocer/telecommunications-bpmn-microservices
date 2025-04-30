@@ -3,8 +3,10 @@ package com.tahaakocer.camunda.client;
 import com.tahaakocer.camunda.dto.GeneralResponse;
 
 import com.tahaakocer.commondto.order.BpmnFlowRefDto;
+import com.tahaakocer.commondto.order.OrderItemDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
 import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -31,4 +33,6 @@ public interface OrderRequestServiceClient {
     ResponseEntity<GeneralResponse<OrderRequestDto>> getOrderRequest(
             @PathVariable UUID orderRequestId
     );
+    @PostMapping("/update-order-item")
+    public ResponseEntity<GeneralResponse<OrderItemDto>> updateOrderItem(@RequestBody GeneralOrderRequest generalOrderRequest);
 }
