@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.tahaakocer.orderservice.utils.Util;
 import jakarta.persistence.PrePersist;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class BaseOrder extends BaseModel {
 
 
     @Field("orderItems")
+    @DBRef
     private List<BaseOrderItem> orderItems = new ArrayList<>();
 
     @Field("isDraft")
