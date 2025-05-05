@@ -1,44 +1,23 @@
 package com.tahaakocer.orderservice.model.postgres;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "customers")
+@Table(name = "customer")
 @Data
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
-    private UUID id;
-
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    private String phoneNumber;
-
-    @Column(unique = true, nullable = false)
-    private String tckn;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(unique = true, nullable = false)
-    private String keycloakUserId;
-
-    private String formattedAddress;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+@NoArgsConstructor
+@SuperBuilder
+@AllArgsConstructor
+public class Customer extends BaseEntity {
+    @OneToOne(fetch = FetchType.LAZY)
+    private PartyRole partyRole;
 }

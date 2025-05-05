@@ -1,7 +1,6 @@
-package com.tahaakocer.orderservice.repository.postgres;
+package com.tahaakocer.orderservice.model.postgres;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
