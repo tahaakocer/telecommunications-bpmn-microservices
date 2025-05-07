@@ -1,10 +1,8 @@
-package com.tahaakocer.commondto.order;
+package com.tahaakocer.crm.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.tahaakocer.crm.model.ContactMedium;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -13,7 +11,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AddressDto extends BaseDto {
+public class ContactMediumCharacteristicDto {
+
+//    private ContactMedium contactMedium;
+
     private Integer bbk;
 
     private Integer cityCode;
@@ -25,8 +26,6 @@ public class AddressDto extends BaseDto {
     private Integer buildingCode;
     private Integer flat;
 
-
-
     private String cityName;
     private String districtName;
     private String townshipName;
@@ -36,7 +35,9 @@ public class AddressDto extends BaseDto {
     private Integer outsideDoorCode;
     private String blokName;
     private String siteName;
-    private Integer flatNo;
     private Integer interiorDoorNo;
 
+    private String formattedAddress;
+    private Long phoneNumber;
+    private String email;
 }

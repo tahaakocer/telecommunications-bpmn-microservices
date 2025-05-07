@@ -49,24 +49,18 @@ public class GlobalServiceTaskExecutionListener implements ExecutionListener {
             throw new GeneralException("GlobalServiceTaskExecutionListener - orderRequestId variable is null");
         }
 
-        String orderItemId = (String) execution.getVariable("orderItemId");
-        if (orderItemId == null) {
-            log.error("GlobalServiceTaskExecutionListener - orderItemId variable is null");
-            throw new GeneralException("GlobalServiceTaskExecutionListener - orderItemId variable is null");
-        }
-
         Object isMainProcessObject = execution.getVariable("isMainProcess");
         if(isMainProcessObject == null) {
             log.error("GlobalServiceTaskExecutionListener - isMainProcess variable is null");
             throw new GeneralException("GlobalServiceTaskExecutionListener - isMainProcess variable is null");
         }
-
-
         Boolean isMainProcess = (Boolean) isMainProcessObject;
+
         OrderUpdateDto orderUpdateDto = getOrderUpdateDto(activityId, activityName, eventName);
         if(isMainProcess) {
             callUpdateOrderRequestMethod(orderRequestId, orderUpdateDto);
         } else {
+            String orderItemId = (String) execution.getVariable("orderItemId");
             callUpdateOrderItemMethod(orderItemId, orderUpdateDto);
         }
 

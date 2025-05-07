@@ -7,13 +7,13 @@
     <bpmn:sequenceFlow id="Flow_13a0lnu" sourceRef="StartEvent_1" targetRef="ScriptTask_0ggrv8s" />
     <bpmn:scriptTask id="ScriptTask_0ggrv8s" name="Set environment variables" scriptFormat="javascript">
       <bpmn:incoming>Flow_13a0lnu</bpmn:incoming>
-      <bpmn:outgoing>Flow_00kexlj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1j8b9m3</bpmn:outgoing>
       <bpmn:script>execution.setVariable('isMainProcess', true);</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_00kexlj" sourceRef="ScriptTask_0ggrv8s" targetRef="Activity_1006c2w" />
-    <bpmn:serviceTask id="Activity_1006c2w" name="demo">
-      <bpmn:incoming>Flow_00kexlj</bpmn:incoming>
-    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1j8b9m3" sourceRef="ScriptTask_0ggrv8s" targetRef="Activity_1c39d38" />
+    <bpmn:userTask id="Activity_1c39d38" name="qwewqe">
+      <bpmn:incoming>Flow_1j8b9m3</bpmn:incoming>
+    </bpmn:userTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="productOrderProcess">
@@ -23,16 +23,17 @@
       <bpmndi:BPMNShape id="ScriptTask_0ggrv8s_di" bpmnElement="ScriptTask_0ggrv8s">
         <dc:Bounds x="290" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_117h0jw_di" bpmnElement="Activity_1006c2w">
-        <dc:Bounds x="450" y="80" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1v2z6zw_di" bpmnElement="Activity_1c39d38">
+        <dc:Bounds x="490" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_13a0lnu_di" bpmnElement="Flow_13a0lnu">
         <di:waypoint x="198" y="120" />
         <di:waypoint x="290" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_00kexlj_di" bpmnElement="Flow_00kexlj">
+      <bpmndi:BPMNEdge id="Flow_1j8b9m3_di" bpmnElement="Flow_1j8b9m3">
         <di:waypoint x="390" y="120" />
-        <di:waypoint x="450" y="120" />
+        <di:waypoint x="490" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

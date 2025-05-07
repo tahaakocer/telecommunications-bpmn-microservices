@@ -1,19 +1,23 @@
-package com.tahaakocer.commondto.order;
+package com.tahaakocer.crm.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Entity
+@Table(name = "address")
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class AddressDto extends BaseDto {
+public class Address extends BaseEntity {
+
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "account_id")
+//    private Account account;
+
     private Integer bbk;
 
     private Integer cityCode;
@@ -25,8 +29,6 @@ public class AddressDto extends BaseDto {
     private Integer buildingCode;
     private Integer flat;
 
-
-
     private String cityName;
     private String districtName;
     private String townshipName;
@@ -36,7 +38,5 @@ public class AddressDto extends BaseDto {
     private Integer outsideDoorCode;
     private String blokName;
     private String siteName;
-    private Integer flatNo;
     private Integer interiorDoorNo;
-
 }

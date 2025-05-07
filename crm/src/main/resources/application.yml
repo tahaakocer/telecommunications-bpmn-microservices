@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: crm
+  config:
+    import: optional:file:.env[.properties]
+  # PostgreSQL
+  datasource:
+      url: jdbc:postgresql://localhost:5432/bpmn-services
+      driver-class-name: org.postgresql.Driver
+      username: postgres
+      password: 123456
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}   # realm bilgisi
+          jwk-set-uri: ${JWT_ISSUER_URI}/protocol/openid-connect/certs
+jwt:
+  auth:
+    converter:
+      resource-id: ${CLIENT_ID}   # client bilgisi
+      principle-attribute: ${PRINCIPLE_ATTRIBUTE}
+
+keycloak:
+  util:
+    client-id: ${CLIENT_ID}
+    client-secret: ${CLIENT_SECRET}
+    admin-username: ${KEYCLOAK_ADMIN_USERNAME}
+    admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
+    username: ${K_USERNAME}
+    password: ${K_PASSWORD}
+    realm: ${REALM}
+    auth-server-url: ${ADMIN_AUTH_URL}
+    token:
+      url: ${JWT_ISSUER_URI}/protocol/openid-connect/token
+
+services:
+  order-request-service:
+    url: http://localhost:8282
+
+
+# Feign Client i�in ayarlar
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  okhttp:
+    enabled: true
+
+resilience4j:
+  retry:
+    instances:
+      process-service:
+        maxRetryAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.io.IOException
+          - org.springframework.web.client.ResourceAccessException
+          - com.tahaakocer.crm.exception.GeneralException
+
+  circuitbreaker:
+    instances:
+      process-service:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 3
+server:
+  port: 8484
+logging:
+  level:
+    com.keycloak: DEBUG

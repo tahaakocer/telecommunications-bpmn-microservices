@@ -1,19 +1,26 @@
-package com.tahaakocer.commondto.order;
+package com.tahaakocer.crm.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "contact_medium_characteristic")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AddressDto extends BaseDto {
+public class ContactMediumCharacteristic extends BaseEntity {
+
+    @OneToOne(mappedBy = "contactMediumCharacteristic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ContactMedium contactMedium;
+
     private Integer bbk;
 
     private Integer cityCode;
@@ -25,8 +32,6 @@ public class AddressDto extends BaseDto {
     private Integer buildingCode;
     private Integer flat;
 
-
-
     private String cityName;
     private String districtName;
     private String townshipName;
@@ -36,7 +41,9 @@ public class AddressDto extends BaseDto {
     private Integer outsideDoorCode;
     private String blokName;
     private String siteName;
-    private Integer flatNo;
     private Integer interiorDoorNo;
 
+    private String formattedAddress;
+    private Long phoneNumber;
+    private String email;
 }
