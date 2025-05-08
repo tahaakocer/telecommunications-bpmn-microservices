@@ -1,7 +1,6 @@
 package com.tahaakocer.crm.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,12 +18,14 @@ import java.util.UUID;
 @SuperBuilder
 public class Partner extends BaseEntity{
 
-    private UUID id;
-    private String tcNo;
-    private String firstName;
-    private String lastName;
-    private String birthYear;
-    private String phoneNumber;
-    private String email;
-    private String keycloakUserId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "party_role_id")
+    private PartyRole partyRole;
+
+    @OneToOne(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PartnerUser partnerUser;
+
+    private Boolean hasCommunicationPermAppr;
+    private Boolean hasPersonalDataUsagePerm;
+
 }

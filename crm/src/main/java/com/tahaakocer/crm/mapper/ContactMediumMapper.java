@@ -8,10 +8,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ContactMediumMapper {
     @Mapping(ignore = true, target = "id")
-    @Mapping(ignore = true, target = "createdAt")
-    @Mapping(ignore = true, target = "updatedAt")
+    @Mapping(ignore = true, target = "createDate")
+    @Mapping(ignore = true, target = "updateDate")
     @Mapping(ignore = true, target = "createdBy")
-    @Mapping(ignore = true, target = "updatedBy")
+    @Mapping(ignore = true, target = "lastModifiedBy")
     ContactMediumCharacteristic AddressDtoToContactMediumCharacteristicEntity(AddressDto addressDto);
 
 }

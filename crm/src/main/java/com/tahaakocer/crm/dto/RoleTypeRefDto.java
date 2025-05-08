@@ -1,13 +1,12 @@
 package com.tahaakocer.crm.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tahaakocer.commondto.order.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,16 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class IndividualDto {
-    private UUID id;
-
-    private IndividualIdentificationDto individualIdentification;
-
-//    private PartyRoleDto partyRole;
-
-    private String firstName;
-    private String lastName;
-    private String formattedName;
-    private Integer birthYear;
-
+public class RoleTypeRefDto extends BaseDto {
+    private String name;
 }

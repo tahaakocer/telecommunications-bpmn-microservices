@@ -5,13 +5,12 @@ import com.tahaakocer.commondto.order.OrderRequestDto;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.model.Individual;
 import com.tahaakocer.crm.model.IndividualIdentification;
+import com.tahaakocer.crm.model.PartnerUser;
 import com.tahaakocer.crm.model.PartyRole;
 import com.tahaakocer.crm.repository.IndividualRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -23,7 +22,7 @@ public class IndividualService {
     }
 
     @Transactional
-    public Individual createIndividualWithOrderRequestAndPartyRole(OrderRequestDto orderRequestDto, PartyRole partyRole) {
+    protected Individual createIndividualWithOrderRequest(OrderRequestDto orderRequestDto, PartyRole partyRole) {
         EngagedPartyDto engagedPartyDto = orderRequestDto.getBaseOrder().getEngagedParty();
 
         IndividualIdentification individualIdentification = new IndividualIdentification();
@@ -38,6 +37,20 @@ public class IndividualService {
         individual.setPartyRole(partyRole);
         individualIdentification.setIndividual(individual);
         return this.saveIndividual(individual);
+    }
+    protected Individual createIndividualWithPartnerUser(PartnerUser partnerUser, PartyRole partyRole) {
+        IndividualIdentification individualIdentification = new IndividualIdentification();
+        individualIdentification.setIdentificationId(partnerUser.getTckn());
+        Individual individual = new Individual();
+        individual.setIndividualIdentification(individualIdentification);
+        individual.setFirstName(partnerUser.getFirstName());
+        individual.setLastName(partnerUser.getLastName());
+        individual.setBirthYear(partnerUser.getBirthYear());
+        individual.setFormattedName(getFormattedName(partnerUser.getFirstName(), partnerUser.getLastName()));
+        individual.setPartyRole(partyRole);
+        individualIdentification.setIndividual(individual);
+        return this.saveIndividual(individual);
+
     }
     private String getFormattedName(String firstName, String lastName) {
         return firstName + " " + lastName;

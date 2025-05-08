@@ -1,13 +1,9 @@
 package com.tahaakocer.crm.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tahaakocer.commondto.order.BaseDto;
 import com.tahaakocer.commondto.order.CharacteristicDto;
-import com.tahaakocer.crm.model.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import com.tahaakocer.crm.model.RoleTypeRef;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +28,12 @@ public class PartyRoleDto extends BaseDto {
     private List<ContactMediumDto> contactMedia;
 
     private CustomerDto customer;
+    private PartnerDto partner;
 
     private IndividualDto individual;
 
     private List<CharacteristicDto> characteristics = new ArrayList<>();
+
+    private RoleTypeRefDto roleTypeRef;
+
 }

@@ -42,7 +42,7 @@ public class CustomerService {
     @Transactional
     public CustomerDto createCustomer(String orderRequestId) {
         OrderRequestDto orderRequestDto = this.callOrderRequestMethod(orderRequestId);
-        PartyRole partyRole = partyRoleService.createPartyRoleWithCustomer();
+        PartyRole partyRole = partyRoleService.createPartyRole("CUSTOMER");
 
         Customer customer = new Customer();
         customer.setPartyRole(partyRole);
@@ -53,8 +53,8 @@ public class CustomerService {
         Customer saved = this.saveCustomer(customer);
 
         // Sonra diğer ilişkili nesneleri oluştur
-        this.individualService.createIndividualWithOrderRequestAndPartyRole(orderRequestDto, partyRole);
-        this.contactMediumService.createContactMediumWithOrderAndPartyRole(orderRequestDto, partyRole);
+        this.individualService.createIndividualWithOrderRequest(orderRequestDto, partyRole);
+        this.contactMediumService.createContactMediumWithOrder(orderRequestDto, partyRole);
 
         return this.customerMapper.entityToDto(saved);
     }
@@ -85,4 +85,5 @@ public class CustomerService {
             throw new GeneralException("Failed to get orderRequest from order service client");
         }
     }
+
 }

@@ -1,27 +1,21 @@
 package com.tahaakocer.crm.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "agreement_ref")
+@Table(name = "role_type_ref")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class AgreementRef extends BaseEntity {
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_role_id")
-    private PartyRole partyRole;
-
-    private UUID refAgreementId;
+public class RoleTypeRef extends BaseEntity{
     private String name;
+
 }

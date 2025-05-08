@@ -24,11 +24,11 @@ public class BaseEntity {
     private UUID id;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime createDate;
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private LocalDateTime updateDate;
     @CreatedBy
     private String createdBy;
     @LastModifiedBy
-    private String updatedBy;
+    private String lastModifiedBy;
 }

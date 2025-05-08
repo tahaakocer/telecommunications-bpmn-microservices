@@ -18,7 +18,6 @@ import java.util.List;
 @SuperBuilder
 @AllArgsConstructor
 public class PartyRole extends BaseEntity {
-    private String roleType;
 
     @OneToMany(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AccountRef> accountRefs = new ArrayList<>();
@@ -33,9 +32,16 @@ public class PartyRole extends BaseEntity {
     private Customer customer;
 
     @OneToOne(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Partner partner;
+
+    @OneToOne(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)
     private Individual individual;
 
     @OneToMany(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Characteristic> characteristics = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_type_ref_id")
+    private RoleTypeRef roleTypeRef;
 
 }

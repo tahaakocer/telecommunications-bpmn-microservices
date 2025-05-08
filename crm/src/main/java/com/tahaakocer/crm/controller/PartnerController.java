@@ -22,12 +22,12 @@ public class PartnerController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<GeneralResponse<PartnerRegisterResponse>> registerUserMongo(
+    public ResponseEntity<GeneralResponse<PartnerDto>> registerUserMongo(
             @RequestBody PartnerRegisterRequest partnerRegisterRequest) {
-        return ResponseEntity.ok(GeneralResponse.<PartnerRegisterResponse>builder()
+        return ResponseEntity.ok(GeneralResponse.<PartnerDto>builder()
                 .code(200)
                 .message("Partner başarıyla kaydedildi.")
-                .data(partnerService.registerPartner(this.partnerMapper.requestToDto(partnerRegisterRequest)))
+                .data(partnerService.registerPartner(partnerRegisterRequest))
                 .build()
         );
 

@@ -52,6 +52,7 @@ public class AddressController {
     @GetMapping("/townships")
     public ResponseEntity<?> getTownships(@RequestParam String districtCode) {
         try {
+            //https://onlineislemler.turktelekom.com.tr/ttnetwsci/guest/e2eSale/inquire/district.oim?id=34&sessionParamName=selectedComboValue1&dataListForSession=districtList
             String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?district=" + districtCode + "&datatype=district";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return ResponseEntity.ok(response.getBody());

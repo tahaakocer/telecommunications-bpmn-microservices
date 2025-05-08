@@ -3,9 +3,11 @@ package com.tahaakocer.crm.service;
 import com.tahaakocer.crm.dto.*;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.PartnerMapper;
-import com.tahaakocer.crm.model.Partner;
+import com.tahaakocer.crm.mapper.PartnerUserMapper;
+import com.tahaakocer.crm.model.*;
 import com.tahaakocer.crm.repository.PartnerRepository;
 import com.tahaakocer.crm.utils.KeycloakUtil;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
@@ -28,6 +30,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -36,6 +39,10 @@ public class PartnerService {
     private final PartnerMapper partnerMapper;
     private final Keycloak keycloak;
     private final KeycloakUtil keycloakUtil;
+    private final IndividualService individualService;
+    private final ContactMediumService contactMediumService;
+    private final PartnerUserMapper partnerUserMapper;
+    private final PartyRoleService partyRoleService;
     private final RestTemplate restTemplate;
 
     @Value("${keycloak.util.realm}")
@@ -51,38 +58,59 @@ public class PartnerService {
     private String authServerUrl;
 
     public PartnerService(PartnerRepository partnerRepository, PartnerMapper partnerMapper,
-                          Keycloak keycloak, KeycloakUtil keycloakUtil, RestTemplate restTemplate) {
+                          Keycloak keycloak, KeycloakUtil keycloakUtil, IndividualService individualService, ContactMediumService contactMediumService, PartnerUserMapper partnerUserMapper, PartyRoleService partyRoleService, RestTemplate restTemplate) {
         this.partnerRepository = partnerRepository;
         this.partnerMapper = partnerMapper;
         this.keycloak = keycloak;
         this.keycloakUtil = keycloakUtil;
+        this.individualService = individualService;
+        this.contactMediumService = contactMediumService;
+        this.partnerUserMapper = partnerUserMapper;
+        this.partyRoleService = partyRoleService;
         this.restTemplate = restTemplate;
     }
 
-    public PartnerRegisterResponse registerPartner(PartnerDto partnerDto) {
+    public PartnerDto getPartner(String partnerId) {
+        Partner partner = this.partnerRepository.findById(UUID.fromString(partnerId))
+                .orElseThrow(() -> new GeneralException("Partner not found"));
+        return this.partnerMapper.entityToDto(partner);
+    }
+    @Transactional
+    public PartnerDto registerPartner(PartnerRegisterRequest partnerRegisterRequest) {
+
+        PartyRole partyRole = this.partyRoleService.createPartyRole("PARTNER");
+        PartnerUser partnerUser = this.partnerUserMapper.partnerRegisterRequestToPartnerUserEntity(partnerRegisterRequest);
+
+        Partner partner = new Partner();
+        partner.setPartnerUser(partnerUser);
+        partner.setHasCommunicationPermAppr(true);
+        partner.setHasPersonalDataUsagePerm(true);
+
+
         // Create user in Keycloak
         String keycloakUserId = createKeycloakUser(
                 keycloak,
-                partnerDto.getFirstName(),
-                partnerDto.getLastName(),
-                partnerDto.getEmail(),
-                partnerDto.getPassword()
+                partnerRegisterRequest.getFirstName(),
+                partnerRegisterRequest.getLastName(),
+                partnerRegisterRequest.getEmail(),
+                partnerRegisterRequest.getPassword()
         );
 
+        partnerUser.setKeycloakUserId(keycloakUserId);
+        partnerUser.setPartner(partner);
+        partner.setPartnerUser(partnerUser);
         // Assign partner group to user
         assignGroupRoleToUser(keycloakUserId);
+        Individual individual = this.individualService.createIndividualWithPartnerUser(partnerUser, partyRole);
+        List<ContactMedium> contactMedia = this.contactMediumService.createContactMediumWithPartnerUser(partnerUser, partyRole);
+        partyRole.setIndividual(individual);
+        partyRole.setContactMedia(contactMedia);
+        partyRole.setPartner(partner);
+        partner.setPartyRole(partyRole);
+        Partner savedPartner = this.partnerRepository.save(partner);
 
-        // Save partner to database using repository
-        Partner partner = partnerMapper.dtoToEntity(partnerDto);
-        partner.setKeycloakUserId(keycloakUserId);
-        partnerRepository.save(partner);
+        return this.partnerMapper.entityToDto(savedPartner);
 
-        return PartnerRegisterResponse.builder()
-                .id(partner.getId())
-                .firstName(partner.getFirstName())
-                .lastName(partner.getLastName())
-                .keycloakUserId(keycloakUserId)
-                .build();
     }
 
     private String createKeycloakUser(Keycloak keycloak, String firstName, String lastName,

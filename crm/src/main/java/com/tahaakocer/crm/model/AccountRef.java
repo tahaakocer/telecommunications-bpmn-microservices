@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Table(name = "account_ref")
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class AccountRef extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

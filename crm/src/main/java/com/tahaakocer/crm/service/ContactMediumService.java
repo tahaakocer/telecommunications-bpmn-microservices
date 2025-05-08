@@ -1,13 +1,12 @@
 package com.tahaakocer.crm.service;
 
 import com.tahaakocer.commondto.order.AddressDto;
-import com.tahaakocer.commondto.order.EngagedPartyDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
-import com.tahaakocer.crm.dto.ContactMediumDto;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.ContactMediumMapper;
 import com.tahaakocer.crm.model.ContactMedium;
 import com.tahaakocer.crm.model.ContactMediumCharacteristic;
+import com.tahaakocer.crm.model.PartnerUser;
 import com.tahaakocer.crm.model.PartyRole;
 import com.tahaakocer.crm.repository.ContactMediumCharacteristicRepository;
 import com.tahaakocer.crm.repository.ContactMediumRepository;
@@ -32,48 +31,64 @@ public class ContactMediumService {
         this.contactMediumCharacteristicRepository = contactMediumCharacteristicRepository;
     }
 
-    public List<ContactMedium> createContactMediumWithOrderAndPartyRole(
+    protected List<ContactMedium> createContactMediumWithOrder(
             OrderRequestDto orderRequestDto,
             PartyRole partyRole) {
         //ADDRESS
-        ContactMedium contactMediumAddress = createAddressContactMedium(orderRequestDto, partyRole);
+        ContactMedium contactMediumAddress = createAddressForCustomer(orderRequestDto, partyRole);
         ContactMedium savedAddress = this.saveContactMedium(contactMediumAddress);
         log.info("Contact Medium created: " + savedAddress.getType());
         //PHone
-        ContactMedium contactMediumPhone = createPhoneContactMedium(orderRequestDto, partyRole);
+        ContactMedium contactMediumPhone = createPhone(
+                orderRequestDto.getBaseOrder().getEngagedParty().getPhoneNumber(), partyRole);
         ContactMedium savedPhone = this.saveContactMedium(contactMediumPhone);
         log.info("Contact Medium created: " + savedPhone.getType());
 
         //EMAIL
-        ContactMedium contactMediumEmail = createEmailContactMedium(orderRequestDto, partyRole);
+        ContactMedium contactMediumEmail = createEmail(
+                orderRequestDto.getBaseOrder().getEngagedParty().getEmail(), partyRole);
         ContactMedium savedEmail = this.saveContactMedium(contactMediumEmail);
         log.info("Contact Medium created: " + savedEmail.getType());
 
         return List.of(savedAddress, savedPhone, savedEmail);
     }
+    protected List<ContactMedium> createContactMediumWithPartnerUser(PartnerUser partnerUser, PartyRole partyRole) {
+        //PHONE
+        ContactMedium contactMediumPhone = createPhone(
+               partnerUser.getPhoneNumber(), partyRole);
+        ContactMedium savedPhone = this.saveContactMedium(contactMediumPhone);
+        log.info("Contact Medium created: " + savedPhone.getType());
+        //EMAİL
+        ContactMedium contactMediumEmail = createEmail(
+               partnerUser.getEmail(), partyRole);
+        ContactMedium savedEmail = this.saveContactMedium(contactMediumEmail);
+        log.info("Contact Medium created: " + savedEmail.getType());
 
-    private ContactMedium createEmailContactMedium(OrderRequestDto orderRequestDto, PartyRole partyRole) {
+        return List.of(savedPhone, savedEmail);
+    }
+
+    private ContactMedium createEmail(String email, PartyRole partyRole) {
         ContactMedium contactMedium = new ContactMedium();
         contactMedium.setPartyRole(partyRole);
         contactMedium.setType("EMAIL");
         ContactMediumCharacteristic emailCharacteristic = new ContactMediumCharacteristic();
-        emailCharacteristic.setEmail(orderRequestDto.getBaseOrder().getEngagedParty().getEmail());
+        emailCharacteristic.setEmail(email);
         emailCharacteristic.setContactMedium(contactMedium);
         contactMedium.setContactMediumCharacteristic(emailCharacteristic);
         return contactMedium;
     }
-    private ContactMedium createPhoneContactMedium(OrderRequestDto orderRequestDto,PartyRole partyRole)
+    private ContactMedium createPhone(Long phoneNum, PartyRole partyRole)
     {
         ContactMedium contactMedium = new ContactMedium();
         contactMedium.setPartyRole(partyRole);
         contactMedium.setType("PHONE");
         ContactMediumCharacteristic phoneCharacteristic = new ContactMediumCharacteristic();
-        phoneCharacteristic.setPhoneNumber(orderRequestDto.getBaseOrder().getEngagedParty().getPhoneNumber());
+        phoneCharacteristic.setPhoneNumber(phoneNum);
         phoneCharacteristic.setContactMedium(contactMedium);
         contactMedium.setContactMediumCharacteristic(phoneCharacteristic);
         return contactMedium;
     }
-    private ContactMedium createAddressContactMedium(OrderRequestDto orderRequestDto, PartyRole partyRole) {
+    private ContactMedium createAddressForCustomer(OrderRequestDto orderRequestDto, PartyRole partyRole) {
         ContactMedium contactMedium = new ContactMedium();
         contactMedium.setPartyRole(partyRole);
         contactMedium.setType("ADDRESS");
