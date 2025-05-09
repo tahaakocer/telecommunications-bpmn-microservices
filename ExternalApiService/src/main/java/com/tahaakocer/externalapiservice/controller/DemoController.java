@@ -22,7 +22,7 @@ public class DemoController {
 
     @GetMapping("/bbk")
     public FullAddressResponse bbk(@RequestParam Integer flat) {
-        return this.bbkService.getFullAddress(flat);
+        return this.bbkService.getFullAddress(String.valueOf(flat));
 
     }
 

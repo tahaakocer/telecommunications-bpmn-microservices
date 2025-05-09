@@ -3,14 +3,12 @@ package com.tahaakocer.externalapiservice.controller;
 import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
+import com.tahaakocer.externalapiservice.dto.infrastructure.MaxSpeedResponse;
 import com.tahaakocer.externalapiservice.service.BbkService;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import com.tahaakocer.externalapiservice.service.InfrastructureService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.UUID;
 
@@ -18,13 +16,11 @@ import java.util.UUID;
 @RequestMapping("/api/bbk-service")
 public class AddressController {
     private final BbkService bbkService;
-    private final RestTemplate restTemplate;
+    private final InfrastructureService infrastructureService;
 
-    public AddressController(BbkService bbkService, RestTemplate restTemplate) {
+    public AddressController(BbkService bbkService, InfrastructureService infrastructureService) {
         this.bbkService = bbkService;
-        this.restTemplate = new RestTemplateBuilder()
-                .messageConverters(new StringHttpMessageConverter(), new MappingJackson2HttpMessageConverter())
-                .build();
+        this.infrastructureService = infrastructureService;
     }
 
     @PostMapping("/update-address")
@@ -38,12 +34,11 @@ public class AddressController {
                 .data(orderRequestResponse).build()
         );
     }
+
     @GetMapping("/districts")
     public ResponseEntity<?> getDistricts(@RequestParam String cityCode) {
         try {
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?city=" + cityCode + "&datatype=city";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(bbkService.getAddressData(1, cityCode));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
         }
@@ -52,32 +47,16 @@ public class AddressController {
     @GetMapping("/townships")
     public ResponseEntity<?> getTownships(@RequestParam String districtCode) {
         try {
-            //https://onlineislemler.turktelekom.com.tr/ttnetwsci/guest/e2eSale/inquire/district.oim?id=34&sessionParamName=selectedComboValue1&dataListForSession=districtList
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?district=" + districtCode + "&datatype=district";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/villages")
-    public ResponseEntity<?> getVillages(@RequestParam String townshipCode) {
-        try {
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?township=" + townshipCode + "&datatype=township";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(bbkService.getAddressData(2, districtCode));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
         }
     }
 
     @GetMapping("/neighborhoods")
-    public ResponseEntity<?> getNeighborhoods(@RequestParam String villageCode) {
+    public ResponseEntity<?> getNeighborhoods(@RequestParam String townshipCode) {
         try {
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?village=" + villageCode + "&datatype=village";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(bbkService.getAddressData(3, townshipCode));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
         }
@@ -86,9 +65,7 @@ public class AddressController {
     @GetMapping("/streets")
     public ResponseEntity<?> getStreets(@RequestParam String neighborhoodCode) {
         try {
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?neighborhood=" + neighborhoodCode + "&datatype=neighborhood";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(bbkService.getAddressData(4, neighborhoodCode));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
         }
@@ -97,23 +74,37 @@ public class AddressController {
     @GetMapping("/buildings")
     public ResponseEntity<?> getBuildings(@RequestParam String streetCode) {
         try {
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?street=" + streetCode + "&datatype=street";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(bbkService.getAddressData(5, streetCode));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
         }
     }
 
-    @GetMapping("/apartments")
-    public ResponseEntity<?> getApartments(@RequestParam String buildingCode) {
+    @GetMapping("/bbk")
+    public ResponseEntity<?> getBbk(@RequestParam String buildingCode) {
         try {
-            String url = "https://user.goknet.com.tr/sistem/getTTAddressWebservice.php?building=" + buildingCode + "&datatype=building";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            return ResponseEntity.ok(bbkService.getAddressData(6, buildingCode));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri getirilemedi: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/infrastructure")
+    public ResponseEntity<?> getInfrastructure(@RequestParam String bbkCode) {
+        try {
+            return ResponseEntity.ok(infrastructureService.getInfrastructureDetail(bbkCode));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Altyapı verisi getirilemedi: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/max-speed")
+    public ResponseEntity<MaxSpeedResponse> getMaxSpeed(@RequestParam String bbkCode) {
+        try {
+            MaxSpeedResponse response = infrastructureService.getMaxSpeed(bbkCode);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }
-

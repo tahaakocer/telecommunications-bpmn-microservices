@@ -1,6 +1,7 @@
 package com.tahaakocer.externalapiservice.controller;
 
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
+import com.tahaakocer.externalapiservice.dto.bbk.InfrastructureDetailResponse;
 import com.tahaakocer.externalapiservice.dto.infrastructure.MaxSpeedResponse;
 import com.tahaakocer.externalapiservice.dto.infrastructure.TTInfrastructureDetailDto;
 import com.tahaakocer.externalapiservice.service.InfrastructureService;
@@ -20,11 +21,11 @@ public class InfrastructureController {
     }
 
     @GetMapping("/get-tt-infrastructure-detail")
-    public ResponseEntity<GeneralResponse<TTInfrastructureDetailDto>> getTTInfrastructureDetail(@RequestParam Integer bbk) {
-        return ResponseEntity.ok(GeneralResponse.<TTInfrastructureDetailDto>builder()
+    public ResponseEntity<GeneralResponse<InfrastructureDetailResponse>> getTTInfrastructureDetail(@RequestParam Integer bbk) {
+        return ResponseEntity.ok(GeneralResponse.<InfrastructureDetailResponse>builder()
                 .code(200)
                 .message("TT infrastructure detail")
-                .data(infrastructureService.getTTInfrastructureDetail(bbk))
+                .data(infrastructureService.getInfrastructureDetail(String.valueOf(bbk)))
                 .build());
     }
     @GetMapping("/max-speed-from-tt")
@@ -32,7 +33,7 @@ public class InfrastructureController {
         return ResponseEntity.ok(GeneralResponse.<MaxSpeedResponse>builder()
                 .code(200)
                 .message("Max speed from TT")
-                .data(infrastructureService.maxSpeedFromTT(bbk))
+                .data(infrastructureService.getMaxSpeed(String.valueOf(bbk)))
                 .build());
     }
 }

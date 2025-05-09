@@ -1,5 +1,6 @@
 package com.tahaakocer.externalapiservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tahaakocer.commondto.order.AddressDto;
 import com.tahaakocer.commondto.order.EngagedPartyDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
@@ -7,17 +8,18 @@ import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.externalapiservice.client.OrderRequestServiceClient;
 import com.tahaakocer.externalapiservice.dto.GeneralResponse;
+import com.tahaakocer.externalapiservice.dto.bbk.AddressDataResponse;
 import com.tahaakocer.externalapiservice.dto.bbk.FullAddressResponse;
-import com.tahaakocer.externalapiservice.dto.bbk.TTAddressResponseDto;
 import com.tahaakocer.externalapiservice.exception.GeneralException;
 import com.tahaakocer.externalapiservice.mapper.AddressMapper;
 import com.tahaakocer.externalapiservice.util.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -28,56 +30,75 @@ import java.util.UUID;
 public class BbkService {
     private final RestTemplate restTemplate;
     private final OrderRequestServiceClient orderRequestServiceClient;
-
     private final AddressMapper addressMapper;
+    private final ObjectMapper objectMapper;
+
+    @Value("${services.netspeed.address-url}")
+    private String addressUrl;
 
     public BbkService(RestTemplate restTemplate,
                       OrderRequestServiceClient orderRequestServiceClient,
-                      AddressMapper addressMapper) {
+                      AddressMapper addressMapper,
+                      ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.orderRequestServiceClient = orderRequestServiceClient;
         this.addressMapper = addressMapper;
+        this.objectMapper = objectMapper;
     }
 
-    @Value("${services.ttaddress-service.url}")
-    private String url;
+    public AddressDataResponse getAddressData(int type, String id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-    public FullAddressResponse getFullAddress(Integer flat) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-                .queryParam("flat", flat)
-                .queryParam("datatype", "flat");
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("type", String.valueOf(type));
+        formData.add("id", id);
 
-        String requestUrl = builder.toUriString();
-        log.info("Requesting address from URL: {}", requestUrl);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formData, headers);
 
-        ResponseEntity<TTAddressResponseDto> response;
+        log.info("Requesting address data from URL: {} with type: {} and id: {}", addressUrl, type, id);
 
+        ResponseEntity<AddressDataResponse> response;
         try {
-            response = restTemplate.getForEntity(requestUrl, TTAddressResponseDto.class);
+            response = restTemplate.postForEntity(addressUrl, requestEntity, AddressDataResponse.class);
             log.info("Response received with status: {}", response.getStatusCode());
         } catch (Exception e) {
-            log.error("bbk servisinde hata olustu: {}", e.getMessage(), e);
-            throw new GeneralException("bbk servisinde hata olustu: " + e.getMessage(), e);
+            log.error("Netspeed adres servisinde hata oluştu: {}", e.getMessage(), e);
+            throw new GeneralException("Netspeed adres servisinde hata oluştu: " + e.getMessage(), e);
         }
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            log.info("Successful response received, mapping to FullAddressResponse");
-            if (response.getBody().getAddress() == null) {
-                log.error("TT servisten gelen yanıtta address alanı null");
-                throw new GeneralException("TT servisten gelen yanıtta address alanı null");
-            }
-            return this.addressMapper.ttAddressDtoToFullAddressResponse(response.getBody().getAddress());
+            log.info("Successful response received from Netspeed");
+            return response.getBody();
         } else {
-            log.error("TT servisten başarısız cevap: Status Code {}, Body {}",
+            log.error("Netspeed servisinden başarısız cevap: Status Code {}, Body {}",
                     response.getStatusCode(), response.getBody());
-            throw new GeneralException("TT servisten cevap alınamıyor: " + response.getStatusCode());
+            throw new GeneralException("Netspeed servisinden cevap alınamıyor: " + response.getStatusCode());
         }
     }
+
+    public FullAddressResponse getFullAddress(String bbkCode) {
+        // Bu metot yeni API ile uyumlu şekilde güncellenebilir, şu an için sadece
+        // kontroller için geçici yapı oluşturulmuştur
+        FullAddressResponse response = new FullAddressResponse();
+        response.setBbk(Integer.valueOf(bbkCode));
+        // Diğer bilgiler gerekirse burada ilgili API çağrıları yapılabilir
+        return response;
+    }
+
     public OrderRequestResponse updateAddress(UUID orderRequestId) {
         OrderRequestDto orderRequestDto = this.getOrderRequestResponse(orderRequestId);
         EngagedPartyDto engagedPartyDto = orderRequestDto.getBaseOrder().getEngagedParty();
         AddressDto addressDtoFromOrder = orderRequestDto.getBaseOrder().getEngagedParty().getAddress();
-        FullAddressResponse fullAddressResponse = this.getFullAddress(addressDtoFromOrder.getFlat());
+
+        String bbkCode = String.valueOf(addressDtoFromOrder.getBbk());
+        if (bbkCode == null || bbkCode.isEmpty()) {
+            throw new GeneralException("BBK kodu bulunamadı");
+        }
+
+        FullAddressResponse fullAddressResponse = this.getFullAddress(bbkCode);
+
+        // Adres bilgilerini güncelle
         addressDtoFromOrder.setCityName(fullAddressResponse.getCityName());
         addressDtoFromOrder.setDistrictName(fullAddressResponse.getDistrictName());
         addressDtoFromOrder.setTownshipName(fullAddressResponse.getTownshipName());
@@ -92,11 +113,13 @@ public class BbkService {
         addressDtoFromOrder.setFlatNo(fullAddressResponse.getFlatNo());
         addressDtoFromOrder.setUpdateDate(LocalDateTime.now());
         addressDtoFromOrder.setLastModifiedBy(KeycloakUtil.getKeycloakUsername());
-        addressDtoFromOrder.setFlatNo(fullAddressResponse.getFlatNo());
+
         engagedPartyDto.setBbk(fullAddressResponse.getBbk());
         engagedPartyDto.setAddress(addressDtoFromOrder);
+
         OrderUpdateDto orderUpdateDto = new OrderUpdateDto();
         orderUpdateDto.setEngagedParty(engagedPartyDto);
+
         OrderRequestResponse orderRequestResponse = this.callServiceForUpdateAddress(orderRequestId, orderUpdateDto);
         log.info("Order request response: {}", orderRequestResponse.getCode());
         return orderRequestResponse;
@@ -108,20 +131,19 @@ public class BbkService {
             response = this.orderRequestServiceClient.updateOrderRequest(orderRequestId, orderUpdateDto);
             log.info("Response received with status: {}", response.getStatusCode());
             return Objects.requireNonNull(response.getBody()).getData();
-
         } catch (Exception e) {
             log.error("BbkService - order update feign servisinde hata olustu: {}", e.getMessage(), e);
             throw new GeneralException("order update feign servisinde hata olustu: " + e.getMessage(), e);
         }
     }
+
     private OrderRequestDto getOrderRequestResponse(UUID orderRequestId) {
         ResponseEntity<GeneralResponse<OrderRequestDto>> response;
         try {
             response = this.orderRequestServiceClient.getOrderRequest(orderRequestId);
             log.info("Response received with status: {}", response.getStatusCode());
             return Objects.requireNonNull(response.getBody()).getData();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("BbkService - order get feign servisinde hata olustu: {}", e.getMessage(), e);
             throw new GeneralException("order get feign servisinde hata olustu: " + e.getMessage(), e);
         }

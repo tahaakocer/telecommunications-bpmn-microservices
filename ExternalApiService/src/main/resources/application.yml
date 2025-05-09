@@ -32,7 +32,9 @@ services:
     url: https://user.goknet.com.tr/sistem/getTTAddressWebservice.php
   tsol-service:
     url: https://user.goknet.com.tr/sistem/getTSOLAddressWebservice.php
-
+  netspeed:
+    address-url: https://www.netspeed.com.tr/Home/GetAddress
+    infrastructure-url: https://www.netspeed.com.tr/Home/GetInfrastractureQueryResult
 
 # Feign Client i�in ayarlar
 feign:
