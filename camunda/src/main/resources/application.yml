@@ -28,7 +28,6 @@ spring:
           issuer-uri: ${JWT_ISSUER_URI} #realm
           jwk-set-uri: ${JWT_ISSUER_URI}/protocol/openid-connect/certs
 
-camunda:
   bpm:
     admin-user:
       id: ${ADMIN_USER_ID}
@@ -37,6 +36,9 @@ camunda:
     enabled: true
     history-level: auto
 
+  cloud:
+    discovery:
+      enabled: true
 jwt:
   auth:
     converter:
@@ -105,4 +107,7 @@ logging:
   level:
     com.tahaakocer.camunda: DEBUG
 
-
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

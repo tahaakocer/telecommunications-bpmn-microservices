@@ -99,3 +99,8 @@ logging:
     org.springframework.data.mongodb: DEBUG
     com.mongodb: DEBUG
     com.keycloak: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

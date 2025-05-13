@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@FeignClient(name = "process-service", url = "${services.process-service.url}")
+@FeignClient(name = "camunda", url = "${services.process-service.url}")
 public interface ProcessServiceClient {
 
 

@@ -1,6 +1,6 @@
 package com.tahaakocer.camunda.delegate;
 
-import camundajar.impl.com.google.gson.Gson;
+import com.google.gson.Gson;
 import com.tahaakocer.camunda.dto.LogDto;
 import com.tahaakocer.camunda.exception.GeneralException;
 import com.tahaakocer.camunda.service.LogService;
@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -73,16 +71,16 @@ public class GenericServiceDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
 
-            initializeVariables(execution);
-            buildRequestBody(execution);
+        initializeVariables(execution);
+        buildRequestBody(execution);
 
-            String processInstanceId = execution.getProcessInstanceId();
-            String accessTokenKey = "accessToken:" + processInstanceId;
+        String processInstanceId = execution.getProcessInstanceId();
+        String accessTokenKey = "accessToken:" + processInstanceId;
 
-            makeServiceCallWithToken(execution, accessTokenKey);
+        makeServiceCallWithToken(execution, accessTokenKey);
 
-            processResponse(execution);
-            logExecution(execution);
+        processResponse(execution);
+        logExecution(execution);
     }
 
     private void initializeVariables(DelegateExecution execution) {
@@ -156,8 +154,7 @@ public class GenericServiceDelegate implements JavaDelegate {
                 fullResponse.put("errorMessage", errorMsg);
                 throw new BpmnError("SERVICE_ERROR", errorMsg);
             }
-        }
-        catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 log.warn("Access token geçersiz, yeni token alınıyor.");
                 try {
@@ -182,15 +179,13 @@ public class GenericServiceDelegate implements JavaDelegate {
                 fullResponse.put("errorMessage", errorMsg);
                 throw new BpmnError("SERVICE_ERROR", errorMsg);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("GenericServiceDelegate - Hata oluştu: {}", e.getMessage(), e);
             execution.setVariable("errorMessage", e.getMessage());
             //noinspection unchecked
             fullResponse.put("errorMessage", e.getMessage());
             throw new BpmnError("SERVICE_ERROR", e.getMessage());
-        }
-        finally {
+        } finally {
             logExecution(execution);
         }
 

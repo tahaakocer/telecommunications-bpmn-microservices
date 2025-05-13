@@ -6,13 +6,21 @@ import com.tahaakocer.crm.client.OrderRequestServiceClient;
 import com.tahaakocer.crm.dto.CustomerDto;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.CustomerMapper;
-import com.tahaakocer.crm.model.Customer;
-import com.tahaakocer.crm.model.PartyRole;
+import com.tahaakocer.crm.model.*;
 import com.tahaakocer.crm.repository.CustomerRepository;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,20 +31,28 @@ public class CustomerService {
     private final PartyRoleService partyRoleService;
     private final ContactMediumService contactMediumService;
     private final OrderRequestServiceClient orderRequestServiceClient;
+
     private final CustomerMapper customerMapper;
+    private final CharacteristicService characteristicService;
+    private final KeycloakService keycloakService;
+
 
     public CustomerService(CustomerRepository customerRepository,
                            IndividualService individualService,
                            PartyRoleService partyRoleService,
                            ContactMediumService contactMediumService,
                            OrderRequestServiceClient orderRequestServiceClient,
-                           CustomerMapper customerMapper) {
+                           CustomerMapper customerMapper,
+                           CharacteristicService characteristicService,
+                           KeycloakService keycloakService) {
         this.customerRepository = customerRepository;
         this.individualService = individualService;
         this.partyRoleService = partyRoleService;
         this.contactMediumService = contactMediumService;
         this.orderRequestServiceClient = orderRequestServiceClient;
         this.customerMapper = customerMapper;
+        this.characteristicService = characteristicService;
+        this.keycloakService = keycloakService;
     }
 
     @Transactional
@@ -53,10 +69,52 @@ public class CustomerService {
         Customer saved = this.saveCustomer(customer);
 
         // Sonra diğer ilişkili nesneleri oluştur
-        this.individualService.createIndividualWithOrderRequest(orderRequestDto, partyRole);
-        this.contactMediumService.createContactMediumWithOrder(orderRequestDto, partyRole);
+        Individual savedIndividual = this.individualService.createIndividualWithOrderRequest(orderRequestDto, partyRole);
+        List<ContactMedium> savedContactMedia = this.contactMediumService.createContactMediumWithOrder(orderRequestDto, partyRole);
+        Characteristic characteristic = new Characteristic();
+        characteristic.setName("orderRequestId");
+        characteristic.setValue(String.valueOf(orderRequestDto.getId()));
+        characteristic.setPartyRole(partyRole);
+        partyRole.getCharacteristics().add(characteristic);
+        partyRole.setIndividual(savedIndividual);
+        partyRole.setContactMedia(savedContactMedia);
+        saved.setPartyRole(partyRole);
+        this.characteristicService.saveCharacteristic(characteristic);
 
         return this.customerMapper.entityToDto(saved);
+    }
+    public CustomerDto createKeycloakUserForCustomer(String orderRequestId) {
+        OrderRequestDto orderRequestDto = this.callOrderRequestMethod(orderRequestId);
+        String firstName = orderRequestDto.getBaseOrder().getEngagedParty().getFirstName();
+        String lastName = orderRequestDto.getBaseOrder().getEngagedParty().getLastName();
+        String email = orderRequestDto.getBaseOrder().getEngagedParty().getEmail();
+
+        String keycloakUserId = this.keycloakService.createKeycloakUser(firstName, lastName, email,null);
+        if (keycloakUserId == null) {
+            throw new GeneralException("Failed to create Keycloak user");
+        }
+        //TODO : Keycloak kullanıcı bilgilerini CRM sistemine kaydet
+        PartyRole partyRole = this.partyRoleService.getParyRoleEntityByOrderRequestId(orderRequestId);
+        if (partyRole == null) {
+            throw new GeneralException("PartyRole not found for order request ID: " + orderRequestId);
+        }
+        Customer customer = this.customerRepository.findByPartyRoleId(partyRole.getId()).orElseThrow(
+                () -> new GeneralException("Customer not found for party role ID: " + partyRole.getId())
+        );
+        customer.setKeycloakUserId(keycloakUserId);
+        Characteristic characteristic = new Characteristic();
+        characteristic.setName("keycloakUserId");
+        characteristic.setValue(keycloakUserId);
+        characteristic.setPartyRole(partyRole);
+        Characteristic savedChar = this.characteristicService.saveCharacteristic(characteristic);
+        partyRole.getCharacteristics().add(savedChar);
+        this.saveCustomer(customer);
+        return this.customerMapper.entityToDto(customer);
+    }
+    public CustomerDto getCustomer(String customerId) {
+        Customer customer = this.customerRepository.findById(UUID.fromString(customerId))
+                .orElseThrow(() -> new GeneralException("Customer not found"));
+        return this.customerMapper.entityToDto(customer);
     }
 
     private Customer saveCustomer(Customer customer) {
@@ -85,5 +143,7 @@ public class CustomerService {
             throw new GeneralException("Failed to get orderRequest from order service client");
         }
     }
+
+
 
 }

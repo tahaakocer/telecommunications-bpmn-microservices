@@ -1,10 +1,10 @@
 package com.tahaakocer.camunda.config;
 
-import camundajar.impl.com.google.gson.Gson;
+import com.google.gson.Gson;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration
 public class GsonConfig {
 
     @Bean

@@ -81,7 +81,7 @@ public class GlobalServiceTaskExecutionListener implements ExecutionListener {
             ResponseEntity<GeneralResponse<OrderItemDto>> response =
                     this.orderRequestServiceClient.updateOrderItem(GeneralOrderRequest.builder()
                                     .orderItemId(orderItemId)
-                                    .orderUpdateDto(orderUpdateDto)
+                                    .update(orderUpdateDto)
                             .build());
 
         } catch (Exception e) {

@@ -14,6 +14,6 @@ public class GeneralOrderRequest {
     private String orderRequestId;
     private String orderItemId;
 
-    private OrderUpdateDto orderUpdateDto;
+    private OrderUpdateDto update;
 
 }

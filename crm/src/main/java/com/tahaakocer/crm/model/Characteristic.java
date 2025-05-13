@@ -1,9 +1,6 @@
 package com.tahaakocer.crm.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,11 +16,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Characteristic extends BaseEntity {
 
-    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "party_role_id")
     private PartyRole partyRole;
 
-    private String code;
     private String name;
 
     private String value;

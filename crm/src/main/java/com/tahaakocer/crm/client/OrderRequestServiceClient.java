@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @FeignClient(
         name = "orderservice",
-        url = "${services.order-request-service.url}",
         configuration = FeignClientConfig.class
 )
 public interface OrderRequestServiceClient {

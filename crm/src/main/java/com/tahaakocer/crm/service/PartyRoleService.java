@@ -58,4 +58,16 @@ public class PartyRoleService {
         log.info("Party role: {}", partyRoleDto);
         return partyRoleDto;
     }
+    public PartyRoleDto getPartyRoleByOrderRequestId(String orderRequestId) {
+        PartyRole partyRole = this.getParyRoleEntityByOrderRequestId(orderRequestId);
+        PartyRoleDto partyRoleDto = partyRoleMapper.entityToDto(partyRole);
+        log.info("Party role: {}", partyRoleDto);
+        return partyRoleDto;
+    }
+    protected PartyRole getParyRoleEntityByOrderRequestId(String orderRequestId) {
+        PartyRole partyRole = partyRoleRepository.findByOrderRequestIdCharacteristic(orderRequestId)
+                .orElseThrow(() -> new GeneralException("Party role not found"));
+        log.info("Party role: {}", partyRole.getId());
+        return partyRole;
+    }
 }

@@ -37,6 +37,7 @@ public class OrderUpdateDto {
     private Boolean removeUnlistedOrderItems = false;
     private Boolean removeUnlistedProducts = false;
 
+    private String name;
     public boolean isRemoveUnlistedCharacteristics() {
         return removeUnlistedCharacteristics != null && removeUnlistedCharacteristics;
     }

@@ -44,6 +44,7 @@ public class PartnerService {
     private final PartnerUserMapper partnerUserMapper;
     private final PartyRoleService partyRoleService;
     private final RestTemplate restTemplate;
+    private final KeycloakService keycloakService;
 
     @Value("${keycloak.util.realm}")
     private String realm;
@@ -58,7 +59,7 @@ public class PartnerService {
     private String authServerUrl;
 
     public PartnerService(PartnerRepository partnerRepository, PartnerMapper partnerMapper,
-                          Keycloak keycloak, KeycloakUtil keycloakUtil, IndividualService individualService, ContactMediumService contactMediumService, PartnerUserMapper partnerUserMapper, PartyRoleService partyRoleService, RestTemplate restTemplate) {
+                          Keycloak keycloak, KeycloakUtil keycloakUtil, IndividualService individualService, ContactMediumService contactMediumService, PartnerUserMapper partnerUserMapper, PartyRoleService partyRoleService, RestTemplate restTemplate, KeycloakService keycloakService) {
         this.partnerRepository = partnerRepository;
         this.partnerMapper = partnerMapper;
         this.keycloak = keycloak;
@@ -68,6 +69,7 @@ public class PartnerService {
         this.partnerUserMapper = partnerUserMapper;
         this.partyRoleService = partyRoleService;
         this.restTemplate = restTemplate;
+        this.keycloakService = keycloakService;
     }
 
     public PartnerDto getPartner(String partnerId) {
@@ -88,8 +90,7 @@ public class PartnerService {
 
 
         // Create user in Keycloak
-        String keycloakUserId = createKeycloakUser(
-                keycloak,
+        String keycloakUserId = this.keycloakService.createKeycloakUser(
                 partnerRegisterRequest.getFirstName(),
                 partnerRegisterRequest.getLastName(),
                 partnerRegisterRequest.getEmail(),
@@ -100,7 +101,7 @@ public class PartnerService {
         partnerUser.setPartner(partner);
         partner.setPartnerUser(partnerUser);
         // Assign partner group to user
-        assignGroupRoleToUser(keycloakUserId);
+        this.keycloakService.assignUserToPartnerGroup(keycloakUserId);
         Individual individual = this.individualService.createIndividualWithPartnerUser(partnerUser, partyRole);
         List<ContactMedium> contactMedia = this.contactMediumService.createContactMediumWithPartnerUser(partnerUser, partyRole);
         partyRole.setIndividual(individual);
@@ -111,91 +112,6 @@ public class PartnerService {
 
         return this.partnerMapper.entityToDto(savedPartner);
 
-    }
-
-    private String createKeycloakUser(Keycloak keycloak, String firstName, String lastName,
-                                      String email, String password) {
-        log.info("Creating Keycloak user with realm: {}, clientId: {}", realm, clientId);
-        RealmResource realmResource = keycloak.realm(realm);
-        UsersResource usersResource = realmResource.users();
-
-        // Kullanıcı adı
-        List<UserRepresentation> existingUsers = usersResource.searchByUsername(email, true);
-        if (!existingUsers.isEmpty()) {
-            log.error("Kullanıcı adı zaten mevcut: {}", email);
-            throw new GeneralException("Kullanıcı adı zaten mevcut.");
-        }
-
-        // E-posta
-        List<UserRepresentation> existingEmails = usersResource.searchByEmail(email, true);
-        if (!existingEmails.isEmpty()) {
-            log.error("E-posta adresi zaten mevcut: {}", email);
-            throw new GeneralException("E-posta adresi zaten mevcut.");
-        }
-
-        UserRepresentation user = new UserRepresentation();
-        user.setEnabled(true);
-        user.setUsername(email);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setEmailVerified(true);
-        Response response = usersResource.create(user);
-        String userId;
-
-        if (response.getStatus() == 201) {
-            userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
-            log.info("Kullanıcı başarıyla oluşturuldu (Status 201). Kullanıcı ID: {}", userId);
-        } else {
-            List<UserRepresentation> createdUsers = usersResource.searchByUsername(email, true);
-            if (!createdUsers.isEmpty()) {
-                userId = createdUsers.get(0).getId();
-                log.warn("Kullanıcı oluşturuldu ancak beklenmeyen durum kodu alındı: {}. Kullanıcı ID: {}", response.getStatus(), userId);
-            } else if (response.getStatus() == 409) {
-                log.error("Kullanıcı adı veya e-posta zaten mevcut.");
-                throw new GeneralException("Kullanıcı adı veya e-posta zaten mevcut.");
-            } else {
-                String errorMessage = response.readEntity(String.class); // Hata mesajını al
-                log.error("Keycloak'ta kullanıcı oluşturulamadı. Status: {}, Mesaj: {}", response.getStatus(), errorMessage);
-                throw new GeneralException("Keycloak'ta kullanıcı oluşturulamadı. Status: " + response.getStatus() + ", Mesaj: " + errorMessage);
-            }
-        }
-
-        setUserPassword(realmResource.users().get(userId), password);
-        log.info("Keycloak'ta kullanıcı oluşturuldu ve şifre ayarlandı. Kullanıcı ID: {}", userId);
-        return userId;
-    }
-
-    private void setUserPassword(UserResource userResource, String password) {
-        CredentialRepresentation credential = new CredentialRepresentation();
-        credential.setTemporary(false);
-        credential.setType(CredentialRepresentation.PASSWORD);
-        credential.setValue(password);
-        userResource.resetPassword(credential);
-    }
-
-    private void assignGroupRoleToUser(String userId) {
-        RealmResource realmResource = keycloak.realm(realm);
-
-        // Tüm grupları al
-        List<GroupRepresentation> allGroups = realmResource.groups().groups();
-
-        // Partner grubunu bul
-        GroupRepresentation partnerGroup = allGroups.stream()
-                .filter(g -> "partner".equals(g.getName()))
-                .findFirst()
-                .orElse(null);
-
-        if (partnerGroup == null) {
-            log.error("Partner grubu bulunamadı!");
-            throw new GeneralException("Partner grubu bulunamadı");
-        }
-
-        // Grup ID'sini kullanarak direkt ekleme yap
-        String groupId = partnerGroup.getId();
-        realmResource.users().get(userId).joinGroup(groupId);
-
-        log.info("Kullanıcı '{}' ID'li partner grubuna eklendi: {}", userId, groupId);
     }
 
     public LoginResponse loginPartner(LoginRequest loginRequest) {

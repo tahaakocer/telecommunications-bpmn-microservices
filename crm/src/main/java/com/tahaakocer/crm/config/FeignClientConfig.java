@@ -1,7 +1,7 @@
 package com.tahaakocer.crm.config;
 
 
-import com.tahaakocer.crm.service.KeycloakTokenService;
+import com.tahaakocer.crm.service.KeycloakService;
 import feign.RequestInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -11,17 +11,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FeignClientConfig {
 
-    private final KeycloakTokenService keycloakTokenService;
+    private final KeycloakService keycloakService;
 
-    public FeignClientConfig(KeycloakTokenService keycloakTokenService) {
-        this.keycloakTokenService = keycloakTokenService;
+    public FeignClientConfig(KeycloakService keycloakService) {
+        this.keycloakService = keycloakService;
     }
 
 
     @Bean
     public RequestInterceptor keycloakRequestInterceptor() {
         return requestTemplate -> {
-            String accessToken = keycloakTokenService.obtainAccessToken();
+            String accessToken = keycloakService.obtainAccessToken();
             log.info(" FEIGN CLIENT - Setting access token");
             requestTemplate.header("Authorization", "Bearer " + accessToken);
         };

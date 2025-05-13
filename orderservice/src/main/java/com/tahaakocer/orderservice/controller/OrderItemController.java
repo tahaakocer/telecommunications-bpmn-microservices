@@ -39,7 +39,7 @@ public class OrderItemController {
     public ResponseEntity<GeneralResponse<OrderItemDto>> updateOrderItem(@RequestBody GeneralOrderRequest generalOrderRequest) {
         OrderItemDto orderItemDto =
                 this.orderItemService.updateOrderItem(
-                        UUID.fromString(generalOrderRequest.getOrderItemId()), generalOrderRequest.getOrderUpdateDto());
+                        UUID.fromString(generalOrderRequest.getOrderItemId()), generalOrderRequest.getUpdate());
         return ResponseEntity.ok(GeneralResponse.<OrderItemDto>builder()
                 .code(HttpStatus.OK.value())
                 .message("Order item updated successfully")

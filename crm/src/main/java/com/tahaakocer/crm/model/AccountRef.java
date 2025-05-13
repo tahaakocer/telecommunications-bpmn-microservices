@@ -28,6 +28,4 @@ public class AccountRef extends BaseEntity {
 
     private UUID refAccountId;
 
-    private LocalDateTime endDate;
-
 }

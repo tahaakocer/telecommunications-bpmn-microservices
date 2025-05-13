@@ -2,8 +2,6 @@ package com.tahaakocer.crm.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tahaakocer.commondto.order.BaseDto;
-import com.tahaakocer.commondto.order.CharacteristicDto;
-import com.tahaakocer.crm.model.RoleTypeRef;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
