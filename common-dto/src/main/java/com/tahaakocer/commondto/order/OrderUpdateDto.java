@@ -29,6 +29,7 @@ public class OrderUpdateDto {
     private ProductDto targetProduct;
     private String reCommitment;
     private OrderStatusDto activeStatusDefinedBy;
+    private PartyRoleRefDto partyRoleRef;
 
     private String processInstanceId;
     private OrderRequestRefDto orderRequestRef;

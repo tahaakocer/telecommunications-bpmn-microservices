@@ -12,7 +12,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "agreement_ref")
+@Table(name = "agreement_ref", schema = "party_role_management")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder

@@ -25,8 +25,6 @@ public class AddressDto extends BaseDto {
     private Integer buildingCode;
     private Integer flat;
 
-
-
     private String cityName;
     private String districtName;
     private String townshipName;
@@ -38,5 +36,7 @@ public class AddressDto extends BaseDto {
     private String siteName;
     private Integer flatNo;
     private Integer interiorDoorNo;
+
+    private SacInfoDto sacInfo;
 
 }

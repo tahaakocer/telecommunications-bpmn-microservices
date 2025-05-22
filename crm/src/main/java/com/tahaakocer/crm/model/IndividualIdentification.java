@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "individual_identification")
+@Table(name = "individual_identification", schema = "party_role_management")
 @Data
 @NoArgsConstructor
 @SuperBuilder

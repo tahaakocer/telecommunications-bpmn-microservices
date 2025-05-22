@@ -1,6 +1,11 @@
 package com.tahaakocer.crm.service;
 
-import com.tahaakocer.crm.dto.*;
+
+import com.tahaakocer.commondto.crm.PartnerDto;
+import com.tahaakocer.crm.dto.LoginRequest;
+import com.tahaakocer.crm.dto.LoginResponse;
+import com.tahaakocer.crm.dto.PartnerRegisterRequest;
+import com.tahaakocer.crm.dto.RefreshTokenRequest;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.PartnerMapper;
 import com.tahaakocer.crm.mapper.PartnerUserMapper;
@@ -8,18 +13,13 @@ import com.tahaakocer.crm.model.*;
 import com.tahaakocer.crm.repository.PartnerRepository;
 import com.tahaakocer.crm.utils.KeycloakUtil;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

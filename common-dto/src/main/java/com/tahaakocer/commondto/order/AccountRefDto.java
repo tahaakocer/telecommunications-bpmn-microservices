@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public class AccountRefDto {
     private UUID id;
-    private String name;
-    private Integer accountCode;
+    private UUID refAccountId;
+    private String accountCode;
+
 }

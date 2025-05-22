@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.UUID;
 
 @Entity
-@Table(name = "individual")
+@Table(name = "individual", schema = "party_role_management")
 @Data
 @NoArgsConstructor
 @SuperBuilder

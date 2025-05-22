@@ -1,7 +1,7 @@
 package com.tahaakocer.crm.controller;
 
+import com.tahaakocer.commondto.crm.RoleTypeRefDto;
 import com.tahaakocer.commondto.response.GeneralResponse;
-import com.tahaakocer.crm.dto.RoleTypeRefDto;
 import com.tahaakocer.crm.service.RoleTypeRefService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

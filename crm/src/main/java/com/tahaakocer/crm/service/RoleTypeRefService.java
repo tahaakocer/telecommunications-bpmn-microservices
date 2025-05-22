@@ -1,6 +1,6 @@
 package com.tahaakocer.crm.service;
 
-import com.tahaakocer.crm.dto.RoleTypeRefDto;
+import com.tahaakocer.commondto.crm.RoleTypeRefDto;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.RoleTypeRefMapper;
 import com.tahaakocer.crm.model.RoleTypeRef;

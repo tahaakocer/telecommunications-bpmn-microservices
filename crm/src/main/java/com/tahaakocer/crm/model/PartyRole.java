@@ -1,25 +1,25 @@
 package com.tahaakocer.crm.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "party_role")
-@Data
+@Table(name = "party_role", schema = "party_role_management")
+@Getter
+@Setter
 @NoArgsConstructor
 @SuperBuilder
 @AllArgsConstructor
+@ToString(exclude = {"accountRefs", "agreementRefs", "contactMedia", "customer", "partner", "individual", "characteristics"})
+@EqualsAndHashCode(callSuper = true, exclude = {"accountRefs", "agreementRefs", "contactMedia", "customer", "partner", "individual", "characteristics"})
+
 public class PartyRole extends BaseEntity {
 
-    @OneToMany(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "partyRole")
     private List<AccountRef> accountRefs = new ArrayList<>();
 
     @OneToMany(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)

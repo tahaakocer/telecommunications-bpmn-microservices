@@ -1,7 +1,11 @@
 package com.tahaakocer.crm.controller;
 
+import com.tahaakocer.commondto.crm.PartnerDto;
 import com.tahaakocer.commondto.response.GeneralResponse;
-import com.tahaakocer.crm.dto.*;
+import com.tahaakocer.crm.dto.LoginRequest;
+import com.tahaakocer.crm.dto.LoginResponse;
+import com.tahaakocer.crm.dto.PartnerRegisterRequest;
+import com.tahaakocer.crm.dto.RefreshTokenRequest;
 import com.tahaakocer.crm.mapper.PartnerMapper;
 import com.tahaakocer.crm.service.PartnerService;
 import org.springframework.http.ResponseEntity;

@@ -44,10 +44,12 @@ public class BaseOrder extends BaseModel {
     @Field("orderType")
     private String orderType;
 
-
     @Field("orderItems")
     @DBRef
     private List<BaseOrderItem> orderItems = new ArrayList<>();
+
+    @Field("partyRoleRef")
+    private PartyRoleRef partyRoleRef;
 
     @Field("isDraft")
     private Boolean isDraft;

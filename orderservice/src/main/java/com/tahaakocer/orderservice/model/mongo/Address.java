@@ -36,5 +36,5 @@ public class Address extends BaseModel {
     private String siteName;
     private Integer interiorDoorNo;
 
-
+    private SacInfo sacInfo;
 }

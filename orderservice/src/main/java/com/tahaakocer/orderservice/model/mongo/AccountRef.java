@@ -13,8 +13,8 @@ public class AccountRef {
     @Id
     private UUID id;
 
-    @Field("accountId")
-    private UUID accountId;
+    @Field("refAccountId")
+    private UUID refAccountId;
 
     @Field("accountCode")
     private String accountCode;

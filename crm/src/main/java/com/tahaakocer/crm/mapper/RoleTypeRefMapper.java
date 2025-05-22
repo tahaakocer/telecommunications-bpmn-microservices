@@ -1,6 +1,7 @@
 package com.tahaakocer.crm.mapper;
 
-import com.tahaakocer.crm.dto.RoleTypeRefDto;
+
+import com.tahaakocer.commondto.crm.RoleTypeRefDto;
 import com.tahaakocer.crm.model.RoleTypeRef;
 import lombok.experimental.SuperBuilder;
 import org.mapstruct.Mapper;

@@ -12,7 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "agreement")
+@Table(name = "agreement", schema = "party_role_management")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder

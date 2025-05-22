@@ -1,12 +1,10 @@
 package com.tahaakocer.crm.mapper;
 
-import com.tahaakocer.crm.dto.CharacteristicDto;
-import com.tahaakocer.crm.dto.PartyRoleDto;
+
+import com.tahaakocer.commondto.crm.PartyRoleCharacteristicDto;
 import com.tahaakocer.crm.model.Characteristic;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +13,9 @@ import java.util.stream.Collectors;
 public interface CharacteristicMapper {
 
     @Mapping(target = "partyRole", ignore = true)
-    CharacteristicDto entityToDto(Characteristic characteristic);
+    PartyRoleCharacteristicDto entityToDto(Characteristic characteristic);
 
-    default List<CharacteristicDto> mapCharacteristics(List<Characteristic> characteristics) {
+    default List<PartyRoleCharacteristicDto> mapCharacteristics(List<Characteristic> characteristics) {
         if (characteristics == null) {
             return null;
         }

@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "contact_medium")
+@Table(name = "contact_medium", schema = "party_role_management")
 @Getter
 @Setter
 @NoArgsConstructor

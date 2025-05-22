@@ -24,6 +24,7 @@ public class BaseOrderDto extends BaseDto{
     private BpmnFlowRefDto bpmnFlowRef;
     private List<OrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
+    private PartyRoleRefDto partyRoleRef;
     private String orderType;
     private Boolean isDraft;
 

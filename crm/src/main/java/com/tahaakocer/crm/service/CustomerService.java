@@ -1,22 +1,17 @@
 package com.tahaakocer.crm.service;
 
+import com.tahaakocer.commondto.crm.CustomerDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.order.PartyRoleRefDto;
 import com.tahaakocer.commondto.response.GeneralResponse;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import com.tahaakocer.crm.client.OrderRequestServiceClient;
-import com.tahaakocer.crm.dto.CustomerDto;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.CustomerMapper;
 import com.tahaakocer.crm.model.*;
 import com.tahaakocer.crm.repository.CustomerRepository;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +76,12 @@ public class CustomerService {
         saved.setPartyRole(partyRole);
         this.characteristicService.saveCharacteristic(characteristic);
 
+        PartyRoleRefDto partyRoleRefDto = new PartyRoleRefDto();
+        partyRoleRefDto.setRefPartyRoleId(partyRole.getId());
+
+        OrderUpdateDto orderUpdateDto = new OrderUpdateDto();
+        orderUpdateDto.setPartyRoleRef(partyRoleRefDto);
+        this.callUpdateOrderRequestMethod(orderRequestId,orderUpdateDto);
         return this.customerMapper.entityToDto(saved);
     }
     public CustomerDto createKeycloakUserForCustomer(String orderRequestId) {
@@ -94,7 +95,7 @@ public class CustomerService {
             throw new GeneralException("Failed to create Keycloak user");
         }
         //TODO : Keycloak kullanıcı bilgilerini CRM sistemine kaydet
-        PartyRole partyRole = this.partyRoleService.getParyRoleEntityByOrderRequestId(orderRequestId);
+        PartyRole partyRole = this.partyRoleService.getPartyRoleEntityByOrderRequestId(orderRequestId);
         if (partyRole == null) {
             throw new GeneralException("PartyRole not found for order request ID: " + orderRequestId);
         }
@@ -132,6 +133,22 @@ public class CustomerService {
         try {
             GeneralResponse<OrderRequestDto> orderRequest = this.orderRequestServiceClient.getOrderRequest(
                     UUID.fromString(orderRequestId)).getBody();
+
+            if (orderRequest == null || orderRequest.getCode() != 200) {
+                log.error("Failed to get orderRequest from order service client");
+                throw new GeneralException("Failed to get orderRequest from order service client");
+            }
+            return orderRequest.getData();
+        } catch (Exception e) {
+            log.error("Error occurred while creating customer: {}", e.getMessage());
+            throw new GeneralException("Failed to get orderRequest from order service client");
+        }
+    }
+
+    private OrderRequestResponse callUpdateOrderRequestMethod(String orderRequestId, OrderUpdateDto orderUpdateDto) {
+        try {
+            GeneralResponse<OrderRequestResponse> orderRequest = this.orderRequestServiceClient.updateOrderRequest(
+                    UUID.fromString(orderRequestId), orderUpdateDto).getBody();
 
             if (orderRequest == null || orderRequest.getCode() != 200) {
                 log.error("Failed to get orderRequest from order service client");

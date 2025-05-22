@@ -1,7 +1,8 @@
 package com.tahaakocer.crm.service;
 
-import com.tahaakocer.crm.dto.PartyRoleDto;
-import com.tahaakocer.crm.dto.RoleTypeRefDto;
+
+import com.tahaakocer.commondto.crm.PartyRoleDto;
+import com.tahaakocer.commondto.crm.RoleTypeRefDto;
 import com.tahaakocer.crm.exception.GeneralException;
 import com.tahaakocer.crm.mapper.PartyRoleMapper;
 import com.tahaakocer.crm.mapper.RoleTypeRefMapper;
@@ -9,7 +10,6 @@ import com.tahaakocer.crm.model.PartyRole;
 import com.tahaakocer.crm.model.RoleTypeRef;
 import com.tahaakocer.crm.repository.PartyRoleRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +51,16 @@ public class PartyRoleService {
         return saved;
     }
 
+    private PartyRole save(PartyRole partyRole) {
+        try{
+            PartyRole saved = this.partyRoleRepository.save(partyRole);
+            log.info("PartyRole saved: " + saved);
+            return saved;
+        }catch (Exception e){
+            log.error("PartyRole save failed: " + e.getMessage());
+            throw new GeneralException("PartyRole save failed: " + e.getMessage());
+        }
+    }
     public PartyRoleDto getPartyRole(String partyRoleId) {
         PartyRole partyRole = partyRoleRepository.findById(UUID.fromString(partyRoleId))
                 .orElseThrow(() -> new GeneralException("Party role not found"));
@@ -59,15 +69,16 @@ public class PartyRoleService {
         return partyRoleDto;
     }
     public PartyRoleDto getPartyRoleByOrderRequestId(String orderRequestId) {
-        PartyRole partyRole = this.getParyRoleEntityByOrderRequestId(orderRequestId);
+        PartyRole partyRole = this.getPartyRoleEntityByOrderRequestId(orderRequestId);
         PartyRoleDto partyRoleDto = partyRoleMapper.entityToDto(partyRole);
         log.info("Party role: {}", partyRoleDto);
         return partyRoleDto;
     }
-    protected PartyRole getParyRoleEntityByOrderRequestId(String orderRequestId) {
+    protected PartyRole getPartyRoleEntityByOrderRequestId(String orderRequestId) {
         PartyRole partyRole = partyRoleRepository.findByOrderRequestIdCharacteristic(orderRequestId)
                 .orElseThrow(() -> new GeneralException("Party role not found"));
         log.info("Party role: {}", partyRole.getId());
         return partyRole;
     }
+
 }

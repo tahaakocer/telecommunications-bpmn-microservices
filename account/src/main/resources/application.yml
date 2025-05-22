@@ -1,0 +1,101 @@
+spring:
+  application:
+    name: account
+  config:
+    import: optional:file:.env[.properties]
+  # PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bpmn-services
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 123456
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: account_management
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}   # realm bilgisi
+          jwk-set-uri: ${JWT_ISSUER_URI}/protocol/openid-connect/certs
+jwt:
+  auth:
+    converter:
+      resource-id: ${CLIENT_ID}   # client bilgisi
+      principle-attribute: ${PRINCIPLE_ATTRIBUTE}
+
+keycloak:
+  client-id: ${CLIENT_ID}
+  client-secret: ${CLIENT_SECRET}
+  username: ${K_USERNAME}
+  password: ${K_PASSWORD}
+  realm: ${REALM}
+  auth-server-url: ${ADMIN_AUTH_URL}
+  token:
+    url: ${JWT_ISSUER_URI}/protocol/openid-connect/token
+
+# S?re? servisi i?in FeignClient ayarlar?
+services:
+  order-request-service:
+    url: http://localhost:8282
+  ttaddress-service:
+    url: https://user.goknet.com.tr/sistem/getTTAddressWebservice.php
+  tsol-service:
+    url: https://user.goknet.com.tr/sistem/getTSOLAddressWebservice.php
+  netspeed:
+    address-url: https://www.netspeed.com.tr/Home/GetAddress
+    infrastructure-url: https://www.netspeed.com.tr/Home/GetInfrastractureQueryResult
+
+# Feign Client i?in ayarlar
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  okhttp:
+    enabled: true
+
+# Hata durumunda yeniden deneme
+resilience4j:
+  retry:
+    instances:
+      process-service:
+        maxRetryAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - java.io.IOException
+          - org.springframework.web.client.ResourceAccessException
+          - com.tahaakocer.externalapiservice.exception.GeneralException
+
+  # Feign Client i?in circuit breaker
+  circuitbreaker:
+    instances:
+      process-service:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 30s
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 3
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    com.mongodb: DEBUG
+    com.keycloak: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+server:
+  port: 8585

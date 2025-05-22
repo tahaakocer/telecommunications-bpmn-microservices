@@ -1,8 +1,6 @@
 package com.tahaakocer.crm.mapper;
 
-import com.tahaakocer.crm.dto.PartnerDto;
-import com.tahaakocer.crm.dto.PartnerRegisterRequest;
-import com.tahaakocer.crm.dto.PartnerRegisterResponse;
+import com.tahaakocer.commondto.crm.PartnerDto;
 import com.tahaakocer.crm.model.Partner;
 import lombok.experimental.SuperBuilder;
 import org.mapstruct.Mapper;

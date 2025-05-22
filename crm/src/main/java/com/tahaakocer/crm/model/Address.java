@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "address")
+@Table(name = "address", schema = "party_role_management")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Address extends BaseEntity {

@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "role_type_ref")
+@Table(name = "role_type_ref", schema = "party_role_management")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder

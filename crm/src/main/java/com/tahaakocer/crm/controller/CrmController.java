@@ -1,11 +1,12 @@
 package com.tahaakocer.crm.controller;
 
+import com.tahaakocer.commondto.crm.AccountDto;
+import com.tahaakocer.commondto.crm.AccountRefDto;
+import com.tahaakocer.commondto.crm.CustomerDto;
+import com.tahaakocer.commondto.crm.PartyRoleDto;
 import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.GeneralResponse;
-import com.tahaakocer.crm.dto.AccountDto;
-import com.tahaakocer.crm.dto.CustomerDto;
-import com.tahaakocer.crm.dto.PartyRoleDto;
-import com.tahaakocer.crm.service.AccountService;
+import com.tahaakocer.crm.service.AccountRefService;
 import com.tahaakocer.crm.service.CustomerService;
 import com.tahaakocer.crm.service.PartyRoleService;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,13 @@ public class CrmController {
 
     private final CustomerService customerService;
     private final PartyRoleService partyRoleService;
-    private final AccountService accountService;
+    private final AccountRefService accountRefService;
 
     public CrmController(CustomerService customerService,
-                         PartyRoleService partyRoleService,
-                         AccountService accountService) {
+                         PartyRoleService partyRoleService, AccountRefService accountRefService) {
         this.customerService = customerService;
         this.partyRoleService = partyRoleService;
-        this.accountService = accountService;
+        this.accountRefService = accountRefService;
     }
 
 
@@ -69,18 +69,17 @@ public class CrmController {
                 .build()
         );
     }
-    @PostMapping("/account/create")
-    public ResponseEntity<GeneralResponse<AccountDto>> createAccount(@RequestBody GeneralOrderRequest generalOrderRequest) {
-        AccountDto accountDto = this.accountService.createAccount(
-                generalOrderRequest.getOrderRequestId(),
-                generalOrderRequest.getUpdate().getName());
-        return ResponseEntity.ok(GeneralResponse.<AccountDto>builder()
+    @PostMapping("/party-role/create-account-ref")
+    public ResponseEntity<GeneralResponse<AccountRefDto>> createAccountRef(@RequestBody GeneralOrderRequest generalOrderRequest) {
+        AccountRefDto accountRefDto = this.accountRefService.createAccountRef(generalOrderRequest.getOrderRequestId());
+        return ResponseEntity.ok(GeneralResponse.<AccountRefDto>builder()
                 .code(200)
-                .message("Account created successfully")
-                .data(accountDto)
+                .message("AccountRef created successfully")
+                .data(accountRefDto)
                 .build()
         );
     }
+
 
 
 }

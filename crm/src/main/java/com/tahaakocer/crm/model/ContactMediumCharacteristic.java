@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "contact_medium_characteristic")
+@Table(name = "contact_medium_characteristic", schema = "party_role_management")
 @Getter
 @Setter
 @AllArgsConstructor
