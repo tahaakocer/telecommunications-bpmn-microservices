@@ -1,6 +1,7 @@
 package com.tahaakocer.commondto.crm;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tahaakocer.commondto.order.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountRefDto {
-//    private PartyRole partyRole;
+public class AccountRefDto extends BaseDto {
 
     private String accountCode;
 
     private UUID refAccountId;
-
-    private LocalDateTime endDate;
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class PartyRole extends BaseEntity {
 
-    @OneToMany(mappedBy = "partyRole")
+    @OneToMany(mappedBy = "partyRole",cascade = CascadeType.ALL)
     private List<AccountRef> accountRefs = new ArrayList<>();
 
     @OneToMany(mappedBy = "partyRole", cascade = CascadeType.ALL, orphanRemoval = true)

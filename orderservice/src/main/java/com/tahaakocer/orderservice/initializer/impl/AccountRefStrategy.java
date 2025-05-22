@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class AccountRefStrategy implements OrderUpdateStrategy {
     private final AccountRefMapper accountRefMapper;
     private final OrderRequestRepository orderRequestRepository;
+
     public AccountRefStrategy(AccountRefMapper accountRefMapper,
                               OrderRequestRepository orderRequestRepository) {
         this.accountRefMapper = accountRefMapper;
@@ -30,48 +31,26 @@ public class AccountRefStrategy implements OrderUpdateStrategy {
 
     @Override
     public boolean canHandle(OrderUpdateDto updateDTO) {
-        return updateDTO.getAccountRefs() != null && !updateDTO.getAccountRefs().isEmpty();
+        return updateDTO.getAccountRef() != null;
     }
 
     @Override
     public boolean objectStatus(OrderRequest order) {
-        return order.getBaseOrder().getAccountRefs() != null && !order.getBaseOrder().getAccountRefs().isEmpty();
+        return order.getBaseOrder().getAccountRef() != null;
     }
 
     @Override
     public void update(OrderRequest order, OrderUpdateDto updateDTO) {
+
         if (!canHandle(updateDTO)) return;
         try {
-            List<AccountRef> existingAccountRefs = order.getBaseOrder().getAccountRefs();
-            List<AccountRefDto> updatedAccountRefs = updateDTO.getAccountRefs();
-
-            Map<UUID,AccountRef> accountRefMap = existingAccountRefs.stream()
-                    .collect(Collectors.toMap(AccountRef::getId, Function.identity()));
-
-            for(AccountRefDto accountRefDto : updatedAccountRefs) {
-                if(accountRefDto.getId() != null && accountRefMap.containsKey(accountRefDto.getId())) {
-                    AccountRef existingAccountRef = accountRefMap.get(accountRefDto.getId());
-                    updateAccountRefsFromDto(existingAccountRef,accountRefDto);
-                } else {
-                    AccountRef newAccountRef = new AccountRef();
-                    newAccountRef.setId(UUID.randomUUID());
-                    updateAccountRefsFromDto(newAccountRef, accountRefDto);
-                    existingAccountRefs.add(newAccountRef);
-                }
-            }
-
-            if (updateDTO.isRemoveUnlistedAccountRefs()) {
-                List<UUID> updatedIds = updatedAccountRefs.stream()
-                        .map(AccountRefDto::getId)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                existingAccountRefs.removeIf(accountRef ->
-                        accountRef.getId() != null && !updatedIds.contains(accountRef.getId()));
-            }
-
-            updateBaseProperties(order);
-        }catch (Exception e) {
+           AccountRef accountRef = order.getBaseOrder().getAccountRef();
+           this.accountRefMapper.updateAccountRefFromDto(accountRef, updateDTO.getAccountRef());
+           this.setBaseOrderUpdateProperties(order);
+           this.setOrderRequestUpdateProperties(order);
+           this.orderRequestRepository.save(order);
+           log.info("Order updated successfully");
+        } catch (Exception e) {
             log.error("Account Ref update failed: {}", e.getMessage());
             throw new GeneralException("Account Ref update failed: " + e.getMessage());
         }
@@ -80,36 +59,21 @@ public class AccountRefStrategy implements OrderUpdateStrategy {
 
     @Override
     public void create(OrderRequest order, OrderUpdateDto updateDTO) {
-        if(!canHandle(updateDTO)) return;
+        if (!canHandle(updateDTO)) return;
         try {
-            List<AccountRef> accountRefs = new ArrayList<>();
-
-            for(AccountRefDto accountRefDto : updateDTO.getAccountRefs()) {
-                AccountRef accountRef = new AccountRef();
-                accountRef.setId(UUID.randomUUID());
-                updateAccountRefsFromDto(accountRef, accountRefDto);
-                accountRefs.add(accountRef);
-            }
-            order.getBaseOrder().setAccountRefs(accountRefs);
-            updateBaseProperties(order);
-            log.info("Account Ref created successfully");
-        }catch (Exception e) {
+            AccountRef accountRef = new AccountRef();
+            accountRef.setId(UUID.randomUUID());
+            accountRef.setRefAccountId(updateDTO.getAccountRef().getRefAccountId());
+            accountRef.setAccountCode(updateDTO.getAccountRef().getAccountCode());
+            order.getBaseOrder().setAccountRef(accountRef);
+            this.setOrderRequestCreateProperties(order);
+            this.setBaseOrderCreateProperties(order);
+            this.orderRequestRepository.save(order);
+            log.info("Account Ref created: {}", accountRef);
+        } catch (Exception e) {
             log.error("Account Ref creation failed: {}", e.getMessage());
             throw new GeneralException("Account Ref creation failed: " + e.getMessage());
         }
     }
-    private void updateBaseProperties(OrderRequest orderRequest) {
-        LocalDateTime now = LocalDateTime.now();
-        String username = KeycloakUtil.getKeycloakUsername();
 
-        orderRequest.getBaseOrder().setUpdateDate(now);
-        orderRequest.getBaseOrder().setLastModifiedBy(username);
-        orderRequest.setUpdateDate(now);
-        orderRequest.setLastModifiedBy(username);
-
-        this.orderRequestRepository.save(orderRequest);
-    }
-    private void updateAccountRefsFromDto(AccountRef target, AccountRefDto source) {
-        this.accountRefMapper.updateAccountRefFromDto(target, source);
-    }
 }

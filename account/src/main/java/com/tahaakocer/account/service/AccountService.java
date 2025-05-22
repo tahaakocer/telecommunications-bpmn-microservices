@@ -8,6 +8,7 @@ import com.tahaakocer.account.model.*;
 import com.tahaakocer.account.repository.AccountRepository;
 import com.tahaakocer.commondto.crm.AccountDto;
 import com.tahaakocer.commondto.order.AccountRefDto;
+import com.tahaakocer.commondto.order.OrderItemDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
 import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.commondto.request.GeneralOrderRequest;
@@ -67,7 +68,8 @@ public class AccountService {
                 orderRequestDto.getBaseOrder().getPartyRoleRef().getRefPartyRoleId(),
                 savedAccount
         );
-        this.createOrderAccountRef(orderRequestId,savedAccount);
+        this.createOrderAccountRef(orderRequestId, savedAccount);
+        this.createOrderItemAccountRef(orderRequestDto, savedAccount);
         this.callCreateAccountRefMethod(orderRequestId);
 
         savedAccount.setContactMedia(contactMedia);
@@ -76,15 +78,33 @@ public class AccountService {
         savedAccount.setPartyRoleRef(savedPartyRoleRef);
         return this.accountMapper.entityToDto(savedAccount);
     }
-    private void createOrderAccountRef(String orderRequestId, Account account) {
+
+    private OrderUpdateDto createOrderUpdateDto(Account account) {
         AccountRefDto orderAccountRefDto = new AccountRefDto();
         orderAccountRefDto.setAccountCode(account.getAccountCode());
         orderAccountRefDto.setRefAccountId(account.getId());
         OrderUpdateDto orderUpdateDto = new OrderUpdateDto();
-        orderUpdateDto.setAccountRefs(List.of(orderAccountRefDto));
-
+        orderUpdateDto.setAccountRef(orderAccountRefDto);
+        return orderUpdateDto;
+    }
+    private void createOrderAccountRef(String orderRequestId, Account account) {
+        OrderUpdateDto orderUpdateDto = this.createOrderUpdateDto(account);
         OrderRequestResponse orderRequestResponse = this.callUpdateOrderRequestMethod(orderRequestId, orderUpdateDto);
     }
+
+    private void createOrderItemAccountRef(OrderRequestDto orderRequestDto, Account account) {
+        OrderUpdateDto orderUpdateDto = this.createOrderUpdateDto(account);
+        if (orderRequestDto.getBaseOrder().getOrderItems() != null &&
+                !orderRequestDto.getBaseOrder().getOrderItems().isEmpty()) {
+            orderRequestDto.getBaseOrder().getOrderItems().forEach(item -> {
+                        this.callUpdateOrderItemMethod(String.valueOf(item.getId()), orderUpdateDto);
+                    }
+            );
+        } else {
+            log.error("No order items found in order request: {}", orderRequestDto.getId());
+        }
+    }
+
     private Account saveAccount(Account account) {
         try {
             Account saved = this.accountRepository.save(account);
@@ -95,6 +115,7 @@ public class AccountService {
             throw new GeneralException("Failed to save account");
         }
     }
+
     private OrderRequestDto callOrderRequestMethod(String orderRequestId) {
         try {
             GeneralResponse<OrderRequestDto> orderRequest = this.orderRequestServiceClient.getOrderRequest(
@@ -110,21 +131,46 @@ public class AccountService {
             throw new GeneralException("Failed to get orderRequest from order service client");
         }
     }
+
     private OrderRequestResponse callUpdateOrderRequestMethod(String orderRequestId, OrderUpdateDto orderUpdateDto) {
         try {
-            GeneralResponse<OrderRequestResponse> orderRequest = this.orderRequestServiceClient.updateOrderRequest(
-                    UUID.fromString(orderRequestId), orderUpdateDto).getBody();
+            ResponseEntity<GeneralResponse<OrderRequestResponse>> orderRequest = this.orderRequestServiceClient.updateOrderRequest(
+                    UUID.fromString(orderRequestId), orderUpdateDto);
+            GeneralResponse<OrderRequestResponse> body = orderRequest.getBody();
 
-            if (orderRequest == null || orderRequest.getCode() != 200) {
+            if (body == null || body.getCode() != 200) {
                 log.error("Failed to get orderRequest from order service client");
                 throw new GeneralException("Failed to get orderRequest from order service client");
             }
-            return orderRequest.getData();
+            return body.getData();
         } catch (Exception e) {
             log.error("Error occurred while creating customer: {}", e.getMessage());
             throw new GeneralException("Failed to get orderRequest from order service client");
         }
     }
+
+    private OrderItemDto callUpdateOrderItemMethod(String orderItemId, OrderUpdateDto orderUpdateDto) {
+        try {
+            ResponseEntity<GeneralResponse<OrderItemDto>> orderItem =
+                    this.orderRequestServiceClient.updateOrderItem(
+                            GeneralOrderRequest.builder()
+                                    .orderItemId(orderItemId)
+                                    .update(orderUpdateDto)
+                                    .build()
+                    );
+            GeneralResponse<OrderItemDto> body = orderItem.getBody();
+
+            if (body == null || body.getCode() != 200) {
+                log.error("Failed to get orderRequest from order service client");
+                throw new GeneralException("Failed to get orderRequest from order service client");
+            }
+            return body.getData();
+        } catch (Exception e) {
+            log.error("Error occurred while creating customer: {}", e.getMessage());
+            throw new GeneralException("Failed to get orderRequest from order service client");
+        }
+    }
+
     private com.tahaakocer.commondto.crm.AccountRefDto callCreateAccountRefMethod(String orderRequestId) {
         try {
             ResponseEntity<GeneralResponse<com.tahaakocer.commondto.crm.AccountRefDto>> accountRefDtoGeneralResponse =

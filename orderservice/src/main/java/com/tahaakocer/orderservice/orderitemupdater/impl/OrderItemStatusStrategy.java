@@ -49,7 +49,7 @@ public class OrderItemStatusStrategy implements OrderItemUpdateStrategy {
             setBaseModelUpdateProperties(orderItem);
             this.orderItemRepository.save(orderItem);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error while updating Order Item status: " + e.getMessage());
             throw new GeneralException("Error while updating Order Item status: " + e.getMessage());
         }
     }

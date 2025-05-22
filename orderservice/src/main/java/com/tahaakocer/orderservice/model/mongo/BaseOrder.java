@@ -32,8 +32,8 @@ public class BaseOrder extends BaseModel {
     @Field("engagedParty")
     private EngagedParty engagedParty;
 
-    @Field("accountRefs")
-    private List<AccountRef> accountRefs = new ArrayList<>();
+    @Field("accountRef")
+    private AccountRef accountRef;
 
     @Field("bpmnFlowRef")
     private BpmnFlowRef bpmnFlowRef;

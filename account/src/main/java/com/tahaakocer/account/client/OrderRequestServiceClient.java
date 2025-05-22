@@ -1,8 +1,10 @@
 package com.tahaakocer.account.client;
 
 import com.tahaakocer.account.config.FeignClientConfig;
+import com.tahaakocer.commondto.order.OrderItemDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
 import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.GeneralResponse;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
 
@@ -31,5 +33,9 @@ public interface OrderRequestServiceClient {
     @GetMapping("/api/initialize/{orderRequestId}/get-order-request")
     ResponseEntity<GeneralResponse<OrderRequestDto>> getOrderRequest(
             @PathVariable UUID orderRequestId
+    );
+    @PostMapping("/api/order-item/update-order-item")
+    ResponseEntity<GeneralResponse<OrderItemDto>> updateOrderItem(
+            @RequestBody GeneralOrderRequest generalOrderRequest
     );
 }

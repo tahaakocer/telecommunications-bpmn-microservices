@@ -17,7 +17,7 @@ import java.util.List;
 @SuperBuilder
 public class OrderUpdateDto {
     private EngagedPartyDto engagedParty;
-    private List<AccountRefDto> accountRefs;
+//    private List<AccountRefDto> accountRefs;
     private BpmnFlowRefDto bpmnFlowRef;
     private List<OrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
@@ -33,6 +33,7 @@ public class OrderUpdateDto {
 
     private String processInstanceId;
     private OrderRequestRefDto orderRequestRef;
+    private AccountRefDto accountRef;
     private Boolean removeUnlistedCharacteristics = false;
     private Boolean removeUnlistedAccountRefs = false;
     private Boolean removeUnlistedOrderItems = false;

@@ -2,7 +2,6 @@ package com.tahaakocer.orderservice.orderitemupdater;
 
 import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.model.mongo.BaseOrderItem;
-import com.tahaakocer.orderservice.model.mongo.OrderRequest;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 
 import java.time.LocalDateTime;
