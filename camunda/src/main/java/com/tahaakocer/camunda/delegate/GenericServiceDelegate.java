@@ -60,7 +60,11 @@ public class GenericServiceDelegate implements JavaDelegate {
     private List<String> parameterKeys;
     private List<String> resultFields;
 
-    public GenericServiceDelegate(RestTemplate restTemplate, RedisTemplate<String, String> redisTemplate, Gson gson, LogService logService, Keycloak keycloakClient) {
+    public GenericServiceDelegate(RestTemplate restTemplate,
+                                  RedisTemplate<String, String> redisTemplate,
+                                  Gson gson,
+                                  LogService logService,
+                                  Keycloak keycloakClient) {
         this.restTemplate = restTemplate;
         this.redisTemplate = redisTemplate;
         this.gson = gson;

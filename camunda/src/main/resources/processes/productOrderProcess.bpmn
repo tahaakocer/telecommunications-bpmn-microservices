@@ -7,33 +7,249 @@
     <bpmn:sequenceFlow id="Flow_13a0lnu" sourceRef="StartEvent_1" targetRef="ScriptTask_0ggrv8s" />
     <bpmn:scriptTask id="ScriptTask_0ggrv8s" name="Set environment variables" scriptFormat="javascript">
       <bpmn:incoming>Flow_13a0lnu</bpmn:incoming>
-      <bpmn:outgoing>Flow_1j8b9m3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04788yk</bpmn:outgoing>
       <bpmn:script>execution.setVariable('isMainProcess', true);</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_1j8b9m3" sourceRef="ScriptTask_0ggrv8s" targetRef="Activity_1c39d38" />
-    <bpmn:userTask id="Activity_1c39d38" name="qwewqe">
-      <bpmn:incoming>Flow_1j8b9m3</bpmn:incoming>
+    <bpmn:sequenceFlow id="Flow_04788yk" sourceRef="ScriptTask_0ggrv8s" targetRef="ST_ItemizeOrder" />
+    <bpmn:serviceTask id="ST_ItemizeOrder" name="Itemize Order" camunda:class="com.tahaakocer.camunda.delegate.GenericServiceDelegate">
+      <bpmn:extensionElements>
+        <camunda:field name="serviceName">
+          <camunda:string>http://localhost:8282/api/order-item/itemize-order</camunda:string>
+        </camunda:field>
+        <camunda:field name="parameters">
+          <camunda:string>orderRequestId</camunda:string>
+        </camunda:field>
+        <camunda:field name="results">
+          <camunda:string>code,message,data</camunda:string>
+        </camunda:field>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_04788yk</bpmn:incoming>
+      <bpmn:incoming>Flow_00k51bq</bpmn:incoming>
+      <bpmn:outgoing>Flow_073xb1n</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_189wvgo" attachedToRef="ST_ItemizeOrder">
+      <bpmn:outgoing>Flow_1fojh6n</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0zctl1g" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="Activity_1m9vbx0" name="System Error">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="errorMessage" label="error" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fojh6n</bpmn:incoming>
+      <bpmn:outgoing>Flow_00k51bq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1fojh6n" sourceRef="Event_189wvgo" targetRef="Activity_1m9vbx0" />
+    <bpmn:sequenceFlow id="Flow_00k51bq" sourceRef="Activity_1m9vbx0" targetRef="ST_ItemizeOrder" />
+    <bpmn:serviceTask id="ST_CreateCustomer" name="Create Customer" camunda:class="com.tahaakocer.camunda.delegate.GenericServiceDelegate">
+      <bpmn:extensionElements>
+        <camunda:field name="serviceName">
+          <camunda:string>http://localhost:8484/api/crm/customer/create</camunda:string>
+        </camunda:field>
+        <camunda:field name="parameters">
+          <camunda:string>orderRequestId</camunda:string>
+        </camunda:field>
+        <camunda:field name="results">
+          <camunda:string>code,message,data</camunda:string>
+        </camunda:field>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_073xb1n</bpmn:incoming>
+      <bpmn:incoming>Flow_1mtis2u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yrvg7p</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1deudct" attachedToRef="ST_CreateCustomer">
+      <bpmn:outgoing>Flow_11fj9s1</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1nb59dy" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_073xb1n" sourceRef="ST_ItemizeOrder" targetRef="ST_CreateCustomer" />
+    <bpmn:userTask id="Activity_0juw9fi" name="System Error">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="errorMessage" label="error" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11fj9s1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mtis2u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_11fj9s1" sourceRef="Event_1deudct" targetRef="Activity_0juw9fi" />
+    <bpmn:sequenceFlow id="Flow_1mtis2u" sourceRef="Activity_0juw9fi" targetRef="ST_CreateCustomer" />
+    <bpmn:serviceTask id="ST_KeycloakRegister" name="Keycloak Register" camunda:class="com.tahaakocer.camunda.delegate.GenericServiceDelegate">
+      <bpmn:extensionElements>
+        <camunda:field name="serviceName">
+          <camunda:string>http://localhost:8484/api/crm/customer/create-keycloak-user</camunda:string>
+        </camunda:field>
+        <camunda:field name="parameters">
+          <camunda:string>orderRequestId</camunda:string>
+        </camunda:field>
+        <camunda:field name="results">
+          <camunda:string>code,message,data</camunda:string>
+        </camunda:field>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ypbsm6</bpmn:incoming>
+      <bpmn:incoming>Flow_0yrvg7p</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pyh1j8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_16dcllw" attachedToRef="ST_KeycloakRegister">
+      <bpmn:outgoing>Flow_1sdld98</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0ammclq" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="Activity_15cupqx" name="System Error">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="errorMessage" label="error" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1sdld98</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ypbsm6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1sdld98" sourceRef="Event_16dcllw" targetRef="Activity_15cupqx" />
+    <bpmn:sequenceFlow id="Flow_1ypbsm6" sourceRef="Activity_15cupqx" targetRef="ST_KeycloakRegister" />
+    <bpmn:sequenceFlow id="Flow_0yrvg7p" sourceRef="ST_CreateCustomer" targetRef="ST_KeycloakRegister" />
+    <bpmn:serviceTask id="ST_CreateAccount" name="Create Account" camunda:class="com.tahaakocer.camunda.delegate.GenericServiceDelegate">
+      <bpmn:extensionElements>
+        <camunda:field name="serviceName">
+          <camunda:string>http://localhost:8585/api/crm/account/create</camunda:string>
+        </camunda:field>
+        <camunda:field name="parameters">
+          <camunda:string>orderRequestId</camunda:string>
+        </camunda:field>
+        <camunda:field name="results">
+          <camunda:string>code,message,data</camunda:string>
+        </camunda:field>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1we5gv9</bpmn:incoming>
+      <bpmn:incoming>Flow_0pyh1j8</bpmn:incoming>
+      <bpmn:outgoing>Flow_14kt0yl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1tvt79q" attachedToRef="ST_CreateAccount">
+      <bpmn:outgoing>Flow_0sq7lbb</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1mcr6d4" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="Activity_1iw3ofc" name="System Error">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="errorMessage" label="error" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0sq7lbb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1we5gv9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0sq7lbb" sourceRef="Event_1tvt79q" targetRef="Activity_1iw3ofc" />
+    <bpmn:sequenceFlow id="Flow_1we5gv9" sourceRef="Activity_1iw3ofc" targetRef="ST_CreateAccount" />
+    <bpmn:sequenceFlow id="Flow_0pyh1j8" sourceRef="ST_KeycloakRegister" targetRef="ST_CreateAccount" />
+    <bpmn:sequenceFlow id="Flow_14kt0yl" sourceRef="ST_CreateAccount" targetRef="Activity_1pnmcuf" />
+    <bpmn:userTask id="Activity_1pnmcuf" name="stop">
+      <bpmn:incoming>Flow_14kt0yl</bpmn:incoming>
     </bpmn:userTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="productOrderProcess">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="162" y="102" width="36" height="36" />
+        <dc:Bounds x="162" y="242" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0ggrv8s_di" bpmnElement="ScriptTask_0ggrv8s">
-        <dc:Bounds x="290" y="80" width="100" height="80" />
+        <dc:Bounds x="290" y="220" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1v2z6zw_di" bpmnElement="Activity_1c39d38">
-        <dc:Bounds x="490" y="80" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1nclmcn_di" bpmnElement="ST_ItemizeOrder">
+        <dc:Bounds x="490" y="220" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05yndmu" bpmnElement="Activity_1m9vbx0">
+        <dc:Bounds x="490" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hk31uo" bpmnElement="ST_CreateCustomer">
+        <dc:Bounds x="660" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08f04m4" bpmnElement="Activity_0juw9fi">
+        <dc:Bounds x="660" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1pto96f" bpmnElement="ST_KeycloakRegister">
+        <dc:Bounds x="830" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0iflwie" bpmnElement="Activity_15cupqx">
+        <dc:Bounds x="830" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0jsn69r" bpmnElement="ST_CreateAccount">
+        <dc:Bounds x="990" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zzaqwu" bpmnElement="Activity_1iw3ofc">
+        <dc:Bounds x="990" y="70" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0x4za94_di" bpmnElement="Activity_1pnmcuf">
+        <dc:Bounds x="1150" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_189wvgo_di" bpmnElement="Event_189wvgo">
+        <dc:Bounds x="542" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05x8h41" bpmnElement="Event_1deudct">
+        <dc:Bounds x="712" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0d7jf8z" bpmnElement="Event_16dcllw">
+        <dc:Bounds x="882" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_02imc88" bpmnElement="Event_1tvt79q">
+        <dc:Bounds x="1042" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_13a0lnu_di" bpmnElement="Flow_13a0lnu">
-        <di:waypoint x="198" y="120" />
-        <di:waypoint x="290" y="120" />
+        <di:waypoint x="198" y="260" />
+        <di:waypoint x="290" y="260" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1j8b9m3_di" bpmnElement="Flow_1j8b9m3">
-        <di:waypoint x="390" y="120" />
-        <di:waypoint x="490" y="120" />
+      <bpmndi:BPMNEdge id="Flow_04788yk_di" bpmnElement="Flow_04788yk">
+        <di:waypoint x="390" y="260" />
+        <di:waypoint x="490" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00k51bq_di" bpmnElement="Flow_00k51bq">
+        <di:waypoint x="520" y="160" />
+        <di:waypoint x="520" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fojh6n_di" bpmnElement="Flow_1fojh6n">
+        <di:waypoint x="560" y="202" />
+        <di:waypoint x="560" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_073xb1n_di" bpmnElement="Flow_073xb1n">
+        <di:waypoint x="590" y="260" />
+        <di:waypoint x="660" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11fj9s1_di" bpmnElement="Flow_11fj9s1">
+        <di:waypoint x="730" y="202" />
+        <di:waypoint x="730" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mtis2u_di" bpmnElement="Flow_1mtis2u">
+        <di:waypoint x="690" y="160" />
+        <di:waypoint x="690" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sdld98_di" bpmnElement="Flow_1sdld98">
+        <di:waypoint x="900" y="202" />
+        <di:waypoint x="900" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ypbsm6_di" bpmnElement="Flow_1ypbsm6">
+        <di:waypoint x="860" y="160" />
+        <di:waypoint x="860" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yrvg7p_di" bpmnElement="Flow_0yrvg7p">
+        <di:waypoint x="760" y="260" />
+        <di:waypoint x="830" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sq7lbb_di" bpmnElement="Flow_0sq7lbb">
+        <di:waypoint x="1060" y="202" />
+        <di:waypoint x="1060" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1we5gv9_di" bpmnElement="Flow_1we5gv9">
+        <di:waypoint x="1020" y="150" />
+        <di:waypoint x="1020" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pyh1j8_di" bpmnElement="Flow_0pyh1j8">
+        <di:waypoint x="930" y="260" />
+        <di:waypoint x="990" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14kt0yl_di" bpmnElement="Flow_14kt0yl">
+        <di:waypoint x="1090" y="260" />
+        <di:waypoint x="1150" y="260" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

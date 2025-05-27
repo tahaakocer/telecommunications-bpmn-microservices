@@ -188,4 +188,21 @@ public class AccountService {
         }
     }
 
+    public AccountDto getAccount(String accountId) {
+        Account account = this.accountRepository.findById(UUID.fromString(accountId)).orElseThrow(
+                () -> new GeneralException("Account not found:" + accountId)
+        );
+        AccountDto accountDto = accountMapper.entityToDto(account);
+        log.info("Account found: " + account);
+        return accountDto;
+    }
+    public List<AccountDto> getAccountByOrderRequestId(String orderRequestId) {
+        OrderRequestDto orderRequest = this.callOrderRequestMethod(orderRequestId);
+
+        List<AccountDto> accountDtos = orderRequest.getBaseOrder().getAccountRefs().stream().map(
+                accountRefDto -> this.getAccount(String.valueOf(accountRefDto.getRefAccountId()))
+                ).toList();
+        log.info("Account found: " + accountDtos.size());
+        return accountDtos;
+    }
 }
