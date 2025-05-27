@@ -1,6 +1,6 @@
 spring:
   application:
-    name: account
+    name: agreement
   config:
     import: optional:file:.env[.properties]
   # PostgreSQL
@@ -17,7 +17,7 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        default_schema: account_management
+        default_schema: agreement_management
   security:
     oauth2:
       resourceserver:
@@ -75,7 +75,7 @@ resilience4j:
         retryExceptions:
           - java.io.IOException
           - org.springframework.web.client.ResourceAccessException
-          - com.tahaakocer.account.exception.GeneralException
+          - com.tahaakocer.agreement.exception.GeneralException
 
   # Feign Client i?in circuit breaker
   circuitbreaker:
@@ -98,4 +98,4 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 server:
-  port: 8686
+  port: 8585
