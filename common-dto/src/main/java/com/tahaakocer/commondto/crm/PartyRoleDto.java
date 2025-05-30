@@ -1,7 +1,7 @@
 package com.tahaakocer.commondto.crm;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tahaakocer.commondto.order.BaseDto;
+import com.tahaakocer.commondto.BaseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

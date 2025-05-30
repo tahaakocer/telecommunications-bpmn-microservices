@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.mapper;
 
 import com.tahaakocer.commondto.order.PartyRoleRefDto;
-import com.tahaakocer.orderservice.model.mongo.PartyRoleRef;
+import com.tahaakocer.orderservice.model.PartyRoleRef;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

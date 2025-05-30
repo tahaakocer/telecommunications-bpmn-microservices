@@ -2,10 +2,9 @@ package com.tahaakocer.orderservice.initializer.impl;
 
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
 import com.tahaakocer.orderservice.dto.initializer.PackageChangeInitializerDto;
-import com.tahaakocer.orderservice.dto.initializer.ProductInitializerDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderFactory;
-import com.tahaakocer.orderservice.model.mongo.ProductOrder;
+import com.tahaakocer.orderservice.model.ProductOrder;
 import org.springframework.stereotype.Component;
 
 @Component

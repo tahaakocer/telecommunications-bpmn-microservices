@@ -1,6 +1,6 @@
 package com.tahaakocer.commondto.order;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tahaakocer.commondto.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class PartyRoleRefDto extends BaseDto{
+public class PartyRoleRefDto extends BaseDto {
     private UUID refPartyRoleId;
 }

@@ -1,6 +1,7 @@
 package com.tahaakocer.commondto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tahaakocer.commondto.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
 
-public class SacInfoDto extends BaseDto{
+public class SacInfoDto extends BaseDto {
     private Integer maxSpeed;
     private String SVUID;
     private boolean adslPortState;

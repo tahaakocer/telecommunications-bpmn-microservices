@@ -9,7 +9,7 @@ import com.tahaakocer.orderservice.dto.response.MaxSpeedResponse;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.ProductCatalogMapper;
 import com.tahaakocer.orderservice.mapper.SpecificationMapper;
-import com.tahaakocer.orderservice.model.mongo.ProductCatalog;
+import com.tahaakocer.orderservice.model.ProductCatalog;
 import com.tahaakocer.orderservice.repository.mongo.ProductCatalogRepository;
 import com.tahaakocer.orderservice.service.AddonService;
 import com.tahaakocer.orderservice.service.ProductCatalogService;

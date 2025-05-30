@@ -3,7 +3,7 @@ package com.tahaakocer.orderservice.mapper;
 import com.tahaakocer.commondto.order.CharacteristicDto;
 import com.tahaakocer.orderservice.dto.request.CharacteristicCreateRequest;
 import com.tahaakocer.orderservice.dto.response.CharacteristicGetAllResponse;
-import com.tahaakocer.orderservice.model.mongo.Characteristic;
+import com.tahaakocer.orderservice.model.Characteristic;
 import lombok.experimental.SuperBuilder;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

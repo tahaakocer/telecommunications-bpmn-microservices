@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.initializer;
 
 import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
-import com.tahaakocer.orderservice.model.mongo.BaseOrder;
+import com.tahaakocer.orderservice.model.BaseOrder;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

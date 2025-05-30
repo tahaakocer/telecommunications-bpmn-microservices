@@ -3,7 +3,7 @@ package com.tahaakocer.orderservice.itemizer.impl;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.itemizer.OrderItemizable;
 import com.tahaakocer.orderservice.itemizer.OrderItemizer;
-import com.tahaakocer.orderservice.model.mongo.*;
+import com.tahaakocer.orderservice.model.*;
 import com.tahaakocer.orderservice.repository.mongo.ProductRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;

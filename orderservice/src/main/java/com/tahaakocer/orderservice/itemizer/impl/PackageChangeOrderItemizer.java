@@ -3,9 +3,9 @@ package com.tahaakocer.orderservice.itemizer.impl;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.itemizer.OrderItemizable;
 import com.tahaakocer.orderservice.itemizer.OrderItemizer;
-import com.tahaakocer.orderservice.model.mongo.OrderRequest;
-import com.tahaakocer.orderservice.model.mongo.PackageChangeOrder;
-import com.tahaakocer.orderservice.model.mongo.PackageChangeOrderItem;
+import com.tahaakocer.orderservice.model.OrderRequest;
+import com.tahaakocer.orderservice.model.PackageChangeOrder;
+import com.tahaakocer.orderservice.model.PackageChangeOrderItem;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

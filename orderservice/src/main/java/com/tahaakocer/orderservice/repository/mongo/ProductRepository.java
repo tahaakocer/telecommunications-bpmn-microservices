@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.repository.mongo;
 
-import com.tahaakocer.orderservice.model.mongo.Product;
+import com.tahaakocer.orderservice.model.Product;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

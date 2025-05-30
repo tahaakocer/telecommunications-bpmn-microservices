@@ -4,7 +4,7 @@ import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.OrderStatusMapper;
-import com.tahaakocer.orderservice.model.mongo.*;
+import com.tahaakocer.orderservice.model.*;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestStatusRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;

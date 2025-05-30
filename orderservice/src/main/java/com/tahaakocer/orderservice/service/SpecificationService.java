@@ -5,7 +5,7 @@ import com.tahaakocer.commondto.order.SpecificationDto;
 import com.tahaakocer.orderservice.dto.request.SpecificationCreateRequest;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.SpecificationMapper;
-import com.tahaakocer.orderservice.model.mongo.Specification;
+import com.tahaakocer.orderservice.model.Specification;
 import com.tahaakocer.orderservice.repository.mongo.SpecificationRepository;
 import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;

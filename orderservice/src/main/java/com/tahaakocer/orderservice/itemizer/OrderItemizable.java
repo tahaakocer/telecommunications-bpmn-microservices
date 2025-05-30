@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.itemizer;
 
 
-import com.tahaakocer.orderservice.model.mongo.BaseOrder;
+import com.tahaakocer.orderservice.model.BaseOrder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

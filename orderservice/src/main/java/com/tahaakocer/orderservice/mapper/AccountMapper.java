@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.mapper;
 
 import com.tahaakocer.commondto.order.AccountDto;
-import com.tahaakocer.orderservice.model.mongo.Account;
+import com.tahaakocer.orderservice.model.Account;
 import lombok.experimental.SuperBuilder;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

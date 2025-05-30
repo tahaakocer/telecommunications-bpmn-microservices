@@ -1,5 +1,6 @@
 package com.tahaakocer.commondto.order;
 
+import com.tahaakocer.commondto.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

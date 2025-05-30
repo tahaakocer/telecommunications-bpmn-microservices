@@ -1,6 +1,7 @@
 package com.tahaakocer.commondto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tahaakocer.commondto.BaseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder
 
-public class BaseOrderDto extends BaseDto{
+public class BaseOrderDto extends BaseDto {
 
     private String code;
     private EngagedPartyDto engagedParty;

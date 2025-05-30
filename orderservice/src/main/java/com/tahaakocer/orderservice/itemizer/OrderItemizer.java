@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.itemizer;
 
-import com.tahaakocer.orderservice.model.mongo.BaseOrderItem;
-import com.tahaakocer.orderservice.model.mongo.OrderRequest;
+import com.tahaakocer.orderservice.model.BaseOrderItem;
+import com.tahaakocer.orderservice.model.OrderRequest;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice;
 
-import com.tahaakocer.orderservice.model.mongo.OrderRequest;
+import com.tahaakocer.orderservice.model.OrderRequest;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
 import org.junit.jupiter.api.Test;
 

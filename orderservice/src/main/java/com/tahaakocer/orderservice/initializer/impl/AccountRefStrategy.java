@@ -1,21 +1,16 @@
 package com.tahaakocer.orderservice.initializer.impl;
 
-import com.tahaakocer.commondto.order.AccountRefDto;
 import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderUpdateStrategy;
 import com.tahaakocer.orderservice.mapper.AccountRefMapper;
-import com.tahaakocer.orderservice.model.mongo.AccountRef;
-import com.tahaakocer.orderservice.model.mongo.OrderRequest;
+import com.tahaakocer.orderservice.model.AccountRef;
+import com.tahaakocer.orderservice.model.OrderRequest;
 import com.tahaakocer.orderservice.repository.mongo.OrderRequestRepository;
-import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component

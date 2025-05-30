@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.mapper;
 
 import com.tahaakocer.commondto.order.EngagedPartyDto;
-import com.tahaakocer.orderservice.model.mongo.EngagedParty;
+import com.tahaakocer.orderservice.model.EngagedParty;
 import lombok.experimental.SuperBuilder;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

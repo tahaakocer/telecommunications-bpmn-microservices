@@ -2,14 +2,11 @@ package com.tahaakocer.orderservice.orderitemupdater.impl;
 
 import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
-import com.tahaakocer.orderservice.model.mongo.BaseOrderItem;
+import com.tahaakocer.orderservice.model.BaseOrderItem;
 import com.tahaakocer.orderservice.orderitemupdater.OrderItemUpdateStrategy;
 import com.tahaakocer.orderservice.repository.mongo.OrderItemRepository;
-import com.tahaakocer.orderservice.utils.KeycloakUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 @Slf4j

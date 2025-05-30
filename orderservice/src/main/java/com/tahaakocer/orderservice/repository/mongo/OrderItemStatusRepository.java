@@ -1,7 +1,6 @@
 package com.tahaakocer.orderservice.repository.mongo;
 
-import com.tahaakocer.orderservice.model.mongo.OrderItemStatus;
-import com.tahaakocer.orderservice.model.mongo.OrderRequestStatus;
+import com.tahaakocer.orderservice.model.OrderItemStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

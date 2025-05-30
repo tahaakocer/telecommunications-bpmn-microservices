@@ -4,7 +4,7 @@ import com.tahaakocer.commondto.order.AddonDto;
 import com.tahaakocer.commondto.order.ProductCatalogDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.mapper.AddonMapper;
-import com.tahaakocer.orderservice.model.mongo.Addon;
+import com.tahaakocer.orderservice.model.Addon;
 import com.tahaakocer.orderservice.repository.mongo.AddonRepository;
 import com.tahaakocer.orderservice.service.AddonService;
 import com.tahaakocer.orderservice.service.ProductCatalogService;

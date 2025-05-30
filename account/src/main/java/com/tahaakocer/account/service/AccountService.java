@@ -14,6 +14,7 @@ import com.tahaakocer.commondto.order.OrderUpdateDto;
 import com.tahaakocer.commondto.request.GeneralOrderRequest;
 import com.tahaakocer.commondto.response.GeneralResponse;
 import com.tahaakocer.commondto.response.OrderRequestResponse;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.Order;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,7 @@ public class AccountService {
         this.accountMapper = accountMapper;
     }
 
+    @Transactional
     public AccountDto createAccount(String orderRequestId) {
         OrderRequestDto orderRequestDto = this.callOrderRequestMethod(orderRequestId);
         Account account = new Account();

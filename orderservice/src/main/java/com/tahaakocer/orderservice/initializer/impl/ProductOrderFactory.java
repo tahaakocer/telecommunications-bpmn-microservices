@@ -3,7 +3,7 @@ import com.tahaakocer.orderservice.dto.initializer.InitializerDto;
 import com.tahaakocer.orderservice.dto.initializer.ProductInitializerDto;
 import com.tahaakocer.orderservice.exception.GeneralException;
 import com.tahaakocer.orderservice.initializer.OrderFactory;
-import com.tahaakocer.orderservice.model.mongo.*;
+import com.tahaakocer.orderservice.model.ProductOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package com.tahaakocer.orderservice.itemizer;
 
-import com.tahaakocer.orderservice.model.mongo.BaseOrder;
+import com.tahaakocer.orderservice.model.BaseOrder;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.tahaakocer.orderservice.mapper;
 
 import com.tahaakocer.commondto.order.OrderStatusDto;
-import com.tahaakocer.orderservice.model.mongo.OrderStatus;
+import com.tahaakocer.orderservice.model.OrderStatus;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
