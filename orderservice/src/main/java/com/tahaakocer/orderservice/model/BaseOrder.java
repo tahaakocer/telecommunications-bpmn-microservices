@@ -54,6 +54,9 @@ public class BaseOrder extends BaseModel {
     @Field("isDraft")
     private Boolean isDraft;
 
+    @Field("agreementRef")
+    private AgreementRef agreementRef;
+
 
     @PrePersist
     public void prePersist() {

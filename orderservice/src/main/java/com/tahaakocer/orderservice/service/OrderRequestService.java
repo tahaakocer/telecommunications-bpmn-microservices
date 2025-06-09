@@ -328,4 +328,11 @@ public class OrderRequestService {
 
     }
 
+    public OrderRequestDto getOrderRequestByTckn(Long tckn) {
+        OrderRequest orderRequest = this.orderRequestRepository.findByTckn(tckn).orElseThrow(
+                () -> new GeneralException("Order request not found with TCKN: " + tckn)
+        );
+        log.info("Retrieved order request by TCKN: {}", tckn);
+        return this.orderRequestMapper.entityToDto(orderRequest);
+    }
 }

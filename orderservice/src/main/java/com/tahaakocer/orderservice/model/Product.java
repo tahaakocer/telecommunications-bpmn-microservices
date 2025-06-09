@@ -33,6 +33,9 @@ public class Product extends BaseModel {
     @Field("productType")
     private String productType;
 
+    @Field("agreementItemRef")
+    private AgreementItemRef agreementItemRef;
+
     @Field("productConfType")
     private String productConfType;
 

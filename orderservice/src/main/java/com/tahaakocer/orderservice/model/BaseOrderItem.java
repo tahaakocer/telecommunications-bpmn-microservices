@@ -40,6 +40,8 @@ public class BaseOrderItem extends BaseModel {
 
     private String orderType;
 
+    private AgreementItemRef agreementItemRef;
+
     @PrePersist
     public void prePersist() {
         this.code = Util.generateRandomCode("ORDIT");

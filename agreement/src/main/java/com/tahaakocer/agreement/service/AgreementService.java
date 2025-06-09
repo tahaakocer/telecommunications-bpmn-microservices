@@ -8,8 +8,13 @@ import com.tahaakocer.agreement.model.AgreementItem;
 import com.tahaakocer.agreement.model.PartyRoleRef;
 import com.tahaakocer.agreement.repository.AgreementRepository;
 import com.tahaakocer.commondto.agreement.AgreementDto;
+import com.tahaakocer.commondto.order.AgreementRefDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.response.GeneralResponse;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,6 +50,7 @@ public class AgreementService {
 //        agreement.setAgreementItems(new ArrayList<>());
         agreement.setType("STANDARD");
         Agreement savedAgreement = this.saveAgreementEntity(agreement);
+        createAgreementRefForOrderRequest(orderRequestDto.getId().toString(), savedAgreement);
         List<AgreementItem> agreementItems = agreementItemService.createAgreementItemEntitiesWithOrder(orderRequestDto, savedAgreement);
 
         PartyRoleRef partyRoleRef = this.partyRoleRefService.createPartyRoleRefByAgreement(orderRequestDto,savedAgreement);
@@ -66,6 +72,30 @@ public class AgreementService {
             throw new GeneralException("Error calling getOrderRequest method", e);
         }
     }
+    private OrderRequestResponse createAgreementRefForOrderRequest(String orderRequestId,Agreement agreement) {
+        log.info("Creating agreement ref for order request ID: {}", orderRequestId);
+        OrderUpdateDto orderUpdateDto = new OrderUpdateDto();
+        AgreementRefDto agreementRefDto = new AgreementRefDto();
+        agreementRefDto.setRefAgreementId(agreement.getId());
+        orderUpdateDto.setAgreementRef(agreementRefDto);
+        return this.callUpdateOrderRequestMethod(orderRequestId, orderUpdateDto);
+    }
+    private OrderRequestResponse callUpdateOrderRequestMethod(String orderRequestId, OrderUpdateDto orderUpdateDto) {
+        try {
+            ResponseEntity<GeneralResponse<OrderRequestResponse>> orderRequest = this.orderRequestServiceClient.updateOrderRequest(
+                    UUID.fromString(orderRequestId), orderUpdateDto);
+            GeneralResponse<OrderRequestResponse> body = orderRequest.getBody();
+
+            if (body == null || body.getCode() != 200) {
+                log.error("Failed to get orderRequest from order service client");
+                throw new GeneralException("Failed to get orderRequest from order service client");
+            }
+            return body.getData();
+        } catch (Exception e) {
+            log.error("Error occurred while creating customer: {}", e.getMessage());
+            throw new GeneralException("Failed to get orderRequest from order service client");
+        }
+    }
     private Agreement saveAgreementEntity(Agreement agreement) {
         try{
             Agreement savedAgreement = agreementRepository.save(agreement);
@@ -76,4 +106,29 @@ public class AgreementService {
             throw new GeneralException("Failed to save agreement", e);
         }
     }
+
+
+    public AgreementDto getAgreement(String agreementId) {
+        log.info("Retrieving agreement with ID: {}", agreementId);
+        Agreement agreement = agreementRepository.findById(UUID.fromString(agreementId))
+                .orElseThrow(() -> new GeneralException("Agreement not found"));
+        AgreementDto agreementDto = agreementMapper.entityToDto(agreement);
+        log.info("Retrieved agreement: {}", agreementDto);
+        return agreementDto;
+    }
+    public AgreementDto getAgreementByOrderId(String orderId) {
+        log.info("Retrieving agreement with ID: {}", orderId);
+        OrderRequestDto orderRequestDto = this.callGetOrderRequestMethod(orderId);
+        if (orderRequestDto.getBaseOrder().getAgreementRef() == null || orderRequestDto.getBaseOrder().getAgreementRef().getRefAgreementId() == null) {
+            log.error("No agreement found for order request ID: {}", orderId);
+            throw new GeneralException("No agreement found for this order request");
+        }
+        AgreementDto agreementDto = this.getAgreement(
+                orderRequestDto.getBaseOrder().getAgreementRef().getRefAgreementId().toString()
+        );
+
+        log.info("Retrieved agreement: {}", agreementDto);
+        return agreementDto;
+    }
+
 }

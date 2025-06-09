@@ -40,9 +40,9 @@ public class AccountController {
                 .build()
         );
     }
-    @GetMapping("/get-by-order-id")
-    public ResponseEntity<GeneralResponse<List<AccountDto>>> getAccountByOrderId(@RequestParam String orderId) {
-        List<AccountDto> accountDtos = this.accountService.getAccountByOrderRequestId(orderId);
+    @PostMapping("/get-by-order-id")
+    public ResponseEntity<GeneralResponse<List<AccountDto>>> getAccountByOrderId(@RequestBody GeneralOrderRequest generalOrderRequest) {
+        List<AccountDto> accountDtos = this.accountService.getAccountByOrderRequestId(generalOrderRequest.getOrderRequestId());
         return ResponseEntity.ok(GeneralResponse.<List<AccountDto>>builder()
                 .code(200)
                 .message("Account found successfully")

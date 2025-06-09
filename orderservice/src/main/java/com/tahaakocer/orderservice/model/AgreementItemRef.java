@@ -11,6 +11,9 @@ public class AgreementItemRef {
     @Id
     private UUID id;
 
+    @Field("refAgreementItemId")
+    private UUID refAgreementItemId;
+
     @Field("refAgreementId")
     private UUID refAgreementId;
 

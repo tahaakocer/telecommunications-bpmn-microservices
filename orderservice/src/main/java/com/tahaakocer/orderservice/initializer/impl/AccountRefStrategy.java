@@ -41,6 +41,7 @@ public class AccountRefStrategy implements OrderUpdateStrategy {
         try {
            AccountRef accountRef = order.getBaseOrder().getAccountRef();
            this.accountRefMapper.updateAccountRefFromDto(accountRef, updateDTO.getAccountRef());
+           order.getBaseOrder().setAccountRef(accountRef);
            this.setBaseOrderUpdateProperties(order);
            this.setOrderRequestUpdateProperties(order);
            this.orderRequestRepository.save(order);

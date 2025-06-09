@@ -40,11 +40,10 @@ public class AccountRefService {
 
         // Null kontrolü ekleyin
         if (orderRequestDto.getBaseOrder() != null &&
-                orderRequestDto.getBaseOrder().getAccountRefs() != null &&
-                !orderRequestDto.getBaseOrder().getAccountRefs().isEmpty()) {
+                orderRequestDto.getBaseOrder().getAccountRef() != null) {
 
-            accountRef.setRefAccountId(orderRequestDto.getBaseOrder().getAccountRefs().get(0).getRefAccountId());
-            accountRef.setAccountCode(orderRequestDto.getBaseOrder().getAccountRefs().get(0).getAccountCode());
+            accountRef.setRefAccountId(orderRequestDto.getBaseOrder().getAccountRef().getRefAccountId());
+            accountRef.setAccountCode(orderRequestDto.getBaseOrder().getAccountRef().getAccountCode());
         } else {
             log.error("No account references found in order request: {}", orderRequestId);
         }

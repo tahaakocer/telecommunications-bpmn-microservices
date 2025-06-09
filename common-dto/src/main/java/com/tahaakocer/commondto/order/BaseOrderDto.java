@@ -21,11 +21,12 @@ public class BaseOrderDto extends BaseDto {
 
     private String code;
     private EngagedPartyDto engagedParty;
-    private List<AccountRefDto> accountRefs;
+    private AccountRefDto accountRef;
     private BpmnFlowRefDto bpmnFlowRef;
     private List<OrderItemDto> orderItems;
     private List<CharacteristicDto> characteristics;
     private PartyRoleRefDto partyRoleRef;
+    private AgreementRefDto agreementRef;
     private String orderType;
     private Boolean isDraft;
 

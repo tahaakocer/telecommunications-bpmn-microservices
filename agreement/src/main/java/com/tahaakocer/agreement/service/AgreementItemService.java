@@ -6,11 +6,14 @@ import com.tahaakocer.agreement.model.*;
 import com.tahaakocer.agreement.repository.AgreementItemRepository;
 import com.tahaakocer.commondto.order.OrderItemDto;
 import com.tahaakocer.commondto.order.OrderRequestDto;
+import com.tahaakocer.commondto.order.OrderUpdateDto;
+import com.tahaakocer.commondto.response.OrderRequestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -18,10 +21,13 @@ public class AgreementItemService {
     private final AgreementItemRepository agreementItemRepository;
     private final ObjectMapper objectMapper;
 
+    private final OrderRequestServiceClient orderRequestServiceClient;
+
     public AgreementItemService(AgreementItemRepository agreementItemRepository,
-                                ObjectMapper objectMapper) {
+                                ObjectMapper objectMapper, OrderRequestServiceClient orderRequestServiceClient) {
         this.agreementItemRepository = agreementItemRepository;
         this.objectMapper = objectMapper;
+        this.orderRequestServiceClient = orderRequestServiceClient;
     }
 
     @Transactional
@@ -62,7 +68,7 @@ public class AgreementItemService {
 
         //AccountRef
         AgreementItemAccountRef accountRef = createAccountRef(orderItem);
-//        accountRef.setAgreementItem(agreementItem);
+        accountRef.setAgreementItem(agreementItem);
         agreementItem.setAgreementItemAccountRef(accountRef);
 
         return agreementItem;
@@ -150,6 +156,25 @@ public class AgreementItemService {
         } catch (Exception e) {
             log.error("Error saving agreement item: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to save agreement item", e);
+        }
+    }
+
+//    private OrderRequestResponse createOrderItemReferenceForOrder() {
+//
+//        return response;
+//    }
+    private OrderRequestResponse callUpdateOrderRequestMethod(String orderRequestId, OrderUpdateDto orderUpdateDto) {
+        try {
+            var response = orderRequestServiceClient.updateOrderRequest(UUID.fromString(orderRequestId), orderUpdateDto);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return response.getBody().getData();
+            } else {
+                log.error("Failed to update order request with ID: {}", orderRequestId);
+                throw new RuntimeException("Failed to update order request");
+            }
+        } catch (Exception e) {
+            log.error("Error calling updateOrderRequest method: {}", e.getMessage(), e);
+            throw new RuntimeException("Error calling updateOrderRequest method", e);
         }
     }
 }

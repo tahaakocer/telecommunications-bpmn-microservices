@@ -49,7 +49,7 @@ public class CrmController {
                 .build()
         );
     }
-    @GetMapping("/get-party-role-by-order-request-id")
+    @PostMapping("/get-party-role-by-order-request-id")
     ResponseEntity<GeneralResponse<PartyRoleDto>> getPartyRoleByOrderRequestId(@RequestBody GeneralOrderRequest generalOrderRequest) {
         PartyRoleDto partyRoleDto = this.partyRoleService.getPartyRoleByOrderRequestId(generalOrderRequest.getOrderRequestId());
         return ResponseEntity.ok(GeneralResponse.<PartyRoleDto>builder()

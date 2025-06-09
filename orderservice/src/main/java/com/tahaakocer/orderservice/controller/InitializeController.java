@@ -157,4 +157,18 @@ public class InitializeController {
                 .build()
         );
     }
+    @GetMapping("/get-order-request")
+    public ResponseEntity<GeneralResponse<OrderRequestDto>> getOrderRequest(
+            @RequestParam Long tckn
+    ) {
+        log.info("Received request to get order {}", tckn);
+        OrderRequestDto orderRequestResponse = this.orderRequestService.getOrderRequestByTckn(tckn);
+        return ResponseEntity.ok(GeneralResponse.<OrderRequestDto>builder()
+                .code(HttpStatus.OK.value())
+                .message("Order request retrieved successfully")
+                .data(orderRequestResponse)
+                .build()
+        );
+    }
+
 }

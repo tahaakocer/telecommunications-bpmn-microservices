@@ -29,7 +29,8 @@ public class AgreementItem extends BaseEntity {
     @JoinColumn(name = "status_id")
     private AgreementItemStatus agreementItemStatus;
 
-    @OneToOne(mappedBy = "agreementItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "account_ref_id")
     private AgreementItemAccountRef agreementItemAccountRef;
 
     private LocalDateTime endDateTime;

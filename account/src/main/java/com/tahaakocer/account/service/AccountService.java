@@ -195,16 +195,20 @@ public class AccountService {
                 () -> new GeneralException("Account not found:" + accountId)
         );
         AccountDto accountDto = accountMapper.entityToDto(account);
-        log.info("Account found: " + account);
+        log.info("Account found: " + accountDto);
         return accountDto;
     }
     public List<AccountDto> getAccountByOrderRequestId(String orderRequestId) {
         OrderRequestDto orderRequest = this.callOrderRequestMethod(orderRequestId);
 
-        List<AccountDto> accountDtos = orderRequest.getBaseOrder().getAccountRefs().stream().map(
-                accountRefDto -> this.getAccount(String.valueOf(accountRefDto.getRefAccountId()))
-                ).toList();
-        log.info("Account found: " + accountDtos.size());
-        return accountDtos;
+//        List<AccountDto> accountDtos = orderRequest.getBaseOrder().getAccountRefs().stream().map(
+//                accountRefDto -> this.getAccount(String.valueOf(accountRefDto.getRefAccountId()))
+//                ).toList();
+
+        AccountDto accountDto = this.getAccount(String.valueOf(orderRequest.getBaseOrder().getAccountRef().getRefAccountId()));
+//        log.info("Account found: " + accountDtos.size());
+        log.info("Account found: " + accountDto);
+//        return accountDto;
+        return List.of(accountDto);
     }
 }

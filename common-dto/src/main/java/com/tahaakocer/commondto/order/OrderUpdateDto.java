@@ -31,6 +31,8 @@ public class OrderUpdateDto {
     private OrderStatusDto activeStatusDefinedBy;
     private PartyRoleRefDto partyRoleRef;
 
+    private AgreementRefDto agreementRef;
+    private AgreementItemRefDto agreementItemRef;
     private String processInstanceId;
     private OrderRequestRefDto orderRequestRef;
     private AccountRefDto accountRef;
